@@ -34,12 +34,7 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
   };
 
   return (
-    <div className="font-body-md text-body-md min-h-screen pb-20 bg-white selection:bg-tertiary-fixed" style={{
-      backgroundImage: 'url(https://lh3.googleusercontent.com/aida-public/AB6AXuCXlVXfs5sWIz6FJ4hlUYZ2JLVZQi1wCdnRlqUZn56MJIKoCoC1qqojVa2kOVWeGzyAX05V-NIZ4EdMv8UQ6eMEVqtRd0oei9aTT1WS6z5TCWWUC84NPlRYgKz1ml6aYvwXcWHXfaBV0MjnqtkcBDY5EQTR-R9X8_2wNmKu2l8LfhitPEs8V7KLOArONMBr_sedamj8mobtqtIqMii0SUNrxu6OFaZVDl36b6lKOSq7b4vs4HRUkZhBjK4Okn_4cMQBYnQ2abU5N9g)',
-      backgroundAttachment: 'fixed',
-      backgroundSize: 'cover'
-    }}>
-      {/* TopAppBar */}
+    <div className="font-body-md text-body-md min-h-screen pb-20 bg-white selection:bg-tertiary-fixed" style={{ backgroundColor: '#fdf8f8' }}>
       <header className="bg-white/80 backdrop-blur-md flex justify-between items-center px-4 md:px-container-margin h-14 md:h-16 w-full fixed top-0 z-50 border-b border-on-surface/10 safe-area-top">
         <div className="flex items-center gap-3">
           <button className="material-symbols-outlined text-primary hover:opacity-70 transition-opacity text-2xl">menu</button>
@@ -54,7 +49,6 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
 
       <main className="pt-20 md:pt-24 px-4 md:px-container-margin max-w-2xl mx-auto space-y-6 md:space-y-stack-lg bg-white/60 backdrop-blur-md rounded-xl py-8 md:py-12 shadow-sm border border-white/40 mt-4 md:mt-0">
         
-        {/* Hero Introduction */}
         <section className="space-y-2 md:space-y-stack-sm text-center">
           <h2 className="font-headline-lg-mobile md:font-headline-lg text-xl md:text-headline-lg-mobile md:text-headline-lg text-primary italic">
             风格调配与创作
@@ -64,7 +58,6 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
           </p>
         </section>
 
-        {/* Section 1: Analyze New Samples */}
         <section className="space-y-2 md:space-y-stack-sm">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-2">
             <label className="font-label-md text-xs md:text-label-md text-on-surface uppercase tracking-wider block">
@@ -88,14 +81,12 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
           </div>
         </section>
 
-        {/* Section 2: Style Mixer */}
         <section className="space-y-3 md:space-y-stack-md">
           <h3 className="font-label-md text-xs md:text-label-md text-on-surface uppercase tracking-wider block">
             风格调配 / STYLE MIXER
           </h3>
           <div className="bg-surface-container-low p-4 md:p-container-margin rounded-lg border border-on-surface/5 space-y-4 md:space-y-6 bg-white/80">
             
-            {/* Mix Slot 1 */}
             <div className="space-y-2 md:space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-on-surface-variant">
@@ -112,7 +103,7 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
                 <div className="flex-1 min-w-0">
                   <p className="text-sm md:text-base font-bold">19世纪浪漫主义</p>
                   <p className="text-[10px] md:text-xs text-on-surface-variant line-clamp-1">
-                    特点：华丽辞藻、强烈情感、自然崇拜
+                    特点：华丽辞藻、强烈情感，自然崇拜
                   </p>
                 </div>
               </div>
@@ -128,7 +119,6 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
               </div>
             </div>
 
-            {/* Mix Slot 2 */}
             <div className="space-y-2 md:space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-on-surface-variant">
@@ -172,14 +162,12 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
           </div>
         </section>
 
-        {/* Section 3: Blend Characteristics */}
         <section className="space-y-3 md:space-y-stack-md">
           <h3 className="font-label-md text-xs md:text-label-md text-on-surface uppercase tracking-wider block">
             混合特性分析 / CHARACTERISTICS
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-gutter">
             
-            {/* Radar Chart */}
             <div className="bg-surface-container-low border border-on-surface/5 p-4 md:p-container-margin rounded-lg flex flex-col items-center bg-white/80">
               <p className="font-label-md text-[10px] md:text-xs mb-4 md:mb-6 self-start text-on-surface uppercase font-bold">
                 新混合文学指纹 / NEW HYBRID FINGERPRINT
@@ -205,7 +193,6 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
               </div>
             </div>
 
-            {/* Metrics */}
             <div className="bg-surface-container-low border border-on-surface/5 p-4 md:p-container-margin rounded-lg space-y-3 md:space-y-stack-md bg-white/80">
               <div>
                 <div className="flex justify-between items-center mb-1">

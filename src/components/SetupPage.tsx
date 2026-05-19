@@ -35,12 +35,10 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Save values to context
     setApiKey(formValues.apiKey);
     setBaseUrl(formValues.baseUrl);
     setModelName(formValues.modelName);
 
-    // Simulate transition
     setTimeout(() => {
       setIsTransitioning(true);
       setTimeout(() => {
@@ -196,38 +194,26 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
         >
           <div className="grid grid-cols-3 gap-3 md:gap-stack-md opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
             <div className="flex flex-col items-center">
-              <div className="w-10 h-14 md:w-12 md:h-16 bg-surface-container-low border border-outline-variant/20 rounded mb-1 md:mb-unit overflow-hidden">
-                <img 
-                  className="w-full h-full object-cover" 
-                  alt="A vintage, minimalist book cover lying flat on a textured ivory surface." 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0pZO4OqjuLmmIH_eA8NkqPyJVH2PkUr309PXeKBzjsH-Mzeg4Motlwbj34WXcCbk-puLQ2iC2Gu-FEvYQ5LOeu4-1S2dkL3k1Ab1a9QN-w7DV0ZxAdtgxbNSfx1XGfTm8ipngcMteaTqrbuhfQbzQC63ytAGhpwqJiaW8qM0YW33dmwQt38x4ititF-GXvHK-clrYW-Bk9fcPn1kcsYCm_d6y8M_6MwXo52-Dz-AeUTKYRXBxa9BVve17kOjYE-wLAt0XLebEirt_G-Xrk"
-                />
+              <div className="w-10 h-14 md:w-12 md:h-16 bg-surface-container-low border border-outline-variant/20 rounded mb-1 md:mb-unit overflow-hidden flex items-center justify-center">
+                <span className="material-symbols-outlined text-2xl text-primary/40">auto_stories</span>
               </div>
             </div>
             
             <div className="flex flex-col items-center translate-y-1 md:translate-y-unit">
-              <div className="w-10 h-14 md:w-12 md:h-16 bg-surface-container-low border border-outline-variant/20 rounded mb-1 md:mb-unit overflow-hidden">
-                <img 
-                  className="w-full h-full object-cover" 
-                  alt="A macro shot of a fountain pen nib resting against high-quality cotton paper." 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdWvtSV-6nBHey0lGSwm04EiHYBaoAJxIRbIhA5tAXNWDoM8gNgmNwVbnspCa8j7vqH9gVtap9WrYNW4ODhUOsfY_5WMvfmO68V29JyfYOQZ6FylNm7TRSyufhoch1JSQi9CTlFNlDLmizopTIEZTKFV7PTejjzd9e8whJtnXYNGIXivDNOmWmuDj5iBUhGUyqMt4QCcp2F0g75x1-KBlSP6XGeZRGIQ9t-2BrRDpN3smcrA_b5t5YW0DoJS_1yTy55bSLPSAz3ZI"
-                />
+              <div className="w-10 h-14 md:w-12 md:h-16 bg-surface-container-low border border-outline-variant/20 rounded mb-1 md:mb-unit overflow-hidden flex items-center justify-center">
+                <span className="material-symbols-outlined text-2xl text-primary/40">edit</span>
               </div>
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="w-10 h-14 md:w-12 md:h-16 bg-surface-container-low border border-outline-variant/20 rounded mb-1 md:mb-unit overflow-hidden">
-                <img 
-                  className="w-full h-full object-cover" 
-                  alt="A sparse, clean study desk featuring a single small plant." 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7U9zvV5Sv4vWeAzwK7UA-KiDw-vvU-b0VEruLX_nS3VaXf752jBsPTSAmfRq8RsvcmrmcdsfZwWAGI6Z5Qu8AOzPY9ukK_dKa9PNE0OgJSbOVCxUvlmTjqT9jUQuXAcct3CUleTQGn4keI5wkmk-JJcD6PvfewWGfigNM3NQB8I6dptR1yuE8nZoUmYSYD_bYBZEC41YTbksqQLH8kiGx5sm3l7W8N9cABXmuky6VPzl1Q2GAkRDpGkqSuO6BMP9Vz-hLGIGbus"
-                />
+              <div className="w-10 h-14 md:w-12 md:h-16 bg-surface-container-low border border-outline-variant/20 rounded mb-1 md:mb-unit overflow-hidden flex items-center justify-center">
+                <span className="material-symbols-outlined text-2xl text-primary/40">history_edu</span>
               </div>
             </div>
           </div>
           
           <p className="text-sm md:text-body-md text-[14px] text-secondary mt-4 md:mt-stack-md opacity-60">
-            “文学是灯，照亮通往实验室的小径。”
+            "文学是灯，照亮通往实验室的小径。"
           </p>
         </motion.footer>
       </main>

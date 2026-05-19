@@ -21,7 +21,6 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   
-  // Check if mobile on mount and resize
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 640);
     checkMobile();
@@ -56,9 +55,8 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
 
   return (
     <div className="font-body-md text-on-surface min-h-screen relative" style={{ backgroundImage: 'radial-gradient(#e5e2e1 0.5px, transparent 0.5px)', backgroundSize: '24px 24px', backgroundColor: '#fdf8f8' }}>
-      <div className="grain-overlay pointer-events-none fixed inset-0 opacity-[0.02]" style={{ zIndex: 9999, backgroundImage: 'url(https://lh3.googleusercontent.com/aida-public/AB6AXuA_BCPYivQqTzC_tbO-u7Y7irYB9NB2qx75Tp1W_5OvNOAvgHcfSx-JWRj98tofQ0L4vIERExEodm0vczNdYkv1nirHipFZOVbMj2reRKG7ipx1-jY9ojz-3D0NYHr97MQhcfrzZEnAiutTRNfnvdoiFP6HdSZFACDSgn-_OofQUK3XOnAVcIA1bg-bR8ELi42MkN23fcQQs26PRU5FBsdnhpJJkqPc5Uwx4tz2mNdpjBE3RrulJZheXiO8GfnOIOvA7XgZzIq2LY)' }}></div>
+      <div className="grain-overlay pointer-events-none fixed inset-0 opacity-[0.015]" style={{ zIndex: 9999 }}></div>
       
-      {/* TopAppBar */}
       <header className="fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-container-margin h-14 md:h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 safe-area-top">
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-primary text-2xl">menu_book</span>
@@ -73,7 +71,6 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
 
       <main className="pt-20 md:pt-24 pb-20 md:pb-32 px-4 md:px-container-margin max-w-2xl mx-auto min-h-screen flex flex-col relative z-10">
         
-        {/* Author Selection */}
         <section className="mb-6 md:mb-stack-lg animate-fade-in" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-center justify-between mb-3 md:mb-stack-sm">
             <span className="text-xs md:text-label-md text-on-surface-variant uppercase tracking-widest">作家选择 / WRITER SELECTION</span>
@@ -83,8 +80,8 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
             </button>
           </div>
           <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl border border-outline-variant/20 bg-surface-container-low ink-shadow cursor-pointer hover:bg-surface-container transition-colors">
-            <div className="w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden bg-surface-container-highest grayscale contrast-125 shrink-0">
-              <img className="w-full h-full object-cover" alt="Ernest Hemingway portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGaUGVsaAZVVxMU4oyagUZBPy95jJ11FOC-sJ6bb92EqjDYkWDdt94XAW_rCetcFzSj2I_ommNo9Jfr5KYVW3V9E_5kyzcLcuu4iMVfM2iEE92IkWR7QW7pl7nE_BRO-7caOYcdMOipIL-rLOZC_m952tCZwVdTUXWXbeSeOLbdnnftKLxglrg4_TSCNereNivZZrts-J8VDuoWacxUNsgqdEWcvVHGPu5lGxCjjDRj1dv9pT_KmDwRPYMys4Tj3ZuMUuM8MWC34" />
+            <div className="w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden bg-surface-container-highest grayscale contrast-125 shrink-0 flex items-center justify-center">
+              <span className="material-symbols-outlined text-2xl md:text-3xl text-primary">person</span>
             </div>
             <div className="flex-1 min-w-0">
               <h2 className="text-base md:text-title-md text-primary mb-1 font-medium">Ernest Hemingway</h2>
@@ -94,7 +91,6 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
           </div>
         </section>
 
-        {/* Main Editor Section */}
         <section className="flex-1 flex flex-col mb-6 md:mb-stack-lg animate-fade-in" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center justify-between mb-3 md:mb-4">
             <label className="text-xs md:text-label-md text-on-surface-variant uppercase tracking-widest" htmlFor="editor">
@@ -119,9 +115,7 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
           </div>
         </section>
 
-        {/* Controls Bento Grid */}
         <section className="space-y-4 md:space-y-stack-md mb-6 md:mb-stack-lg animate-fade-in" style={{ animationDelay: '0.3s' }}>
-          {/* Intensity Slider */}
           <div className="p-4 md:p-6 rounded-xl border border-outline-variant/10 bg-surface-container-lowest ink-shadow">
             <div className="flex justify-between items-center mb-4 md:mb-6">
               <label className="text-xs md:text-label-md text-on-surface-variant">文风强度 / STYLE INTENSITY</label>
@@ -142,7 +136,6 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
             </div>
           </div>
 
-          {/* Output Mode */}
           <div className="p-4 md:p-6 rounded-xl border border-outline-variant/10 bg-surface-container-lowest ink-shadow">
             <label className="text-xs md:text-label-md text-on-surface-variant block mb-3 md:mb-4">输出模式 / OUTPUT MODE</label>
             <div className="flex p-1 bg-surface-container-high rounded-xl">
@@ -159,7 +152,6 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
           </div>
         </section>
 
-        {/* Primary Action */}
         <footer className="mt-auto animate-fade-in" style={{ animationDelay: '0.4s' }}>
           <button 
             onClick={handlePolishClick}
@@ -175,7 +167,6 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
         </footer>
       </main>
 
-      {/* Contextual FAB - Hide on mobile for cleaner UI */}
       <button 
         className={`fixed bottom-20 md:bottom-24 right-4 md:right-8 w-12 h-12 md:w-14 md:h-14 bg-primary text-surface rounded-full flex items-center justify-center ink-shadow hover:scale-105 active:scale-95 transition-all z-40 ${originalText.length > 10 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
       >

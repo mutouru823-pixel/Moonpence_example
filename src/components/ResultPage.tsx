@@ -7,7 +7,6 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
   const [copied, setCopied] = useState(false);
   const { polishResult } = useAppContext();
 
-  // Default mock data if no result
   const defaultResult = {
     polishedText: "The intersection of digital precision and classical literature creates a unique space for the modern scholar. Within this digital sanctuary, the weight of a word is measured not just by its definition, but by its resonant frequency within the architecture of a sentence. We find that the most profound insights often reside in the quietest transitions, where ink meets digital parchment.",
     styleProfile: {
@@ -42,9 +41,8 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
   };
 
   return (
-    <div className="min-h-screen text-on-surface relative bg-surface selection:bg-tertiary-fixed pb-20" style={{ backgroundImage: 'url(https://lh3.googleusercontent.com/aida-public/AB6AXuAgv2w0C9It4fOO-3vLhvtdQlyT691_60qux49AXFArGki6vGOufTSjXTbS6pDJQ-yVEXoeLvOILikI4tVrE5xSK1FkhuulYHtEJsXjyzT1QEdPgsjlNtP3GYmZof8Ff6IBMEWtH5fBfFmghO-SSNEUHWQXLLFOCJFV6z2Dur7RoQpIgNqh8EUjkAt4PcGDr3I0475c8DKMFbv-OQPSFRZwCXGcLQRRWusiIee_DlExSwGzqn7uY8-MPJOseudbrPfTdaQRzexM)', backgroundColor: '#fdf8f8', backgroundAttachment: 'fixed', backgroundSize: 'cover' }}>
+    <div className="min-h-screen text-on-surface relative bg-surface selection:bg-tertiary-fixed pb-20" style={{ backgroundColor: '#fdf8f8' }}>
       
-      {/* TopAppBar */}
       <header className="fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-container-margin h-14 md:h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 safe-area-top">
         <div className="flex items-center gap-2 md:gap-2">
           <span className="material-symbols-outlined text-primary text-2xl">menu_book</span>
@@ -61,7 +59,6 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
 
       <main className="pt-20 md:pt-24 pb-8 px-4 md:px-container-margin max-w-2xl mx-auto relative z-10">
         
-        {/* Status & Mode Section */}
         <div className="flex flex-col gap-2 md:gap-unit mb-6 md:mb-stack-lg animate-fade-in">
           <div className="flex items-center gap-2 text-on-surface-variant">
             <span className="material-symbols-outlined text-lg">auto_awesome</span>
@@ -76,9 +73,8 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
           </div>
         </div>
 
-        {/* Main Content Canvas (Polished Text) */}
         <article className="bg-surface-container-lowest paper-border ink-shadow rounded-lg p-4 md:p-stack-md mb-6 md:mb-stack-lg relative overflow-hidden group animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'url(https://www.transparenttextures.com/patterns/notebook.png)' }}></div>
+          <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{ backgroundColor: '#1c1b1b' }}></div>
           <div className="relative z-10">
             <p className="font-quote-block text-lg md:text-quote-block leading-relaxed text-on-surface italic first-letter:text-4xl md:first-letter:text-5xl first-letter:font-bold first-letter:mr-2 md:first-letter:mr-3 first-letter:float-left first-letter:mt-1">
               {result.polishedText}
@@ -96,7 +92,6 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
           </div>
         </article>
 
-        {/* Multi-dimensional Style Profile */}
         <section className="mt-6 md:mt-stack-lg space-y-4 md:space-y-stack-md animate-fade-in" style={{ animationDelay: '0.2s' }}>
           <h3 className="font-title-md text-base md:text-title-md border-b border-primary/10 pb-2">多维风格画像 / Multi-dimensional Style Profile</h3>
           <div className="grid grid-cols-2 gap-3 md:gap-4">
@@ -168,7 +163,6 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
           </div>
         </section>
 
-        {/* Analysis Mode: Stylistic Points */}
         <section className="mt-6 md:mt-stack-lg space-y-3 md:space-y-stack-md animate-fade-in" style={{ animationDelay: '0.3s' }}>
           <h3 className="font-title-md text-base md:text-title-md border-b border-primary/10 pb-2">文墨赏析 / Stylistic Analysis</h3>
           <div className="grid gap-3 md:gap-stack-sm">
@@ -186,7 +180,6 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
           </div>
         </section>
 
-        {/* Interaction Bar */}
         <div className="mt-6 md:mt-stack-lg flex flex-col gap-3 animate-fade-in" style={{ animationDelay: '0.4s' }}>
           <button 
             onClick={handleCopy}
@@ -205,9 +198,8 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
         </div>
       </main>
 
-      {/* Visual Flair: Subtle Background Image */}
       <div className="fixed top-[20%] -right-24 opacity-[0.04] pointer-events-none select-none z-0 rotate-12 hidden md:block">
-        <img alt="Ink and Parchment" className="w-96" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAycTo7Kyr0dClRakSBJg514vVTOajcfRld7J3J8nkpkovduhupB1_3zQU2tEePAbdiiiqCJXkXnt-4zJ3PBLoH7ZYBxrbNUlr7cNlwAMKY_5CSDXq0MxS_b1yK7jXmq8xki90hzD0gV-BO5Ut0OcOIDhHT_79qf1jkwaH-Hw477pWxT3BarI9nL4K8va2XvCHhB9l1M99gfK1lM46srsCDlnDMfekmspGBFtZscnnbycfmePVa5T9b3T8T8BlUmXfhA9ZGlwKDKE" />
+        <span className="material-symbols-outlined text-[200px] text-primary">auto_stories</span>
       </div>
 
       <BottomNav currentPage="result" onNavigate={onNavigate} />

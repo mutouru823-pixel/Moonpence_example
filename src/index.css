@@ -80,8 +80,11 @@
   }
 
   .paper-texture {
-    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuA0pZO4OqjuLmmIH_eA8NkqPyJVH2PkUr309PXeKBzjsH-Mzeg4Motlwbj34WXcCbk-puLQ2iC2Gu-FEvYQ5LOeu4-1S2dkL3k1Ab1a9QN-w7DV0ZxAdtgxbNSfx1XGfTm8ipngcMteaTqrbuhfQbzQC63ytAGhpwqJiaW8qM0YW33dmwQt38x4ititF-GXvHK-clrYW-Bk9fcPn1kcsYCm_d6y8M_6MwXo52-Dz-AeUTKYRXBxa9BVve17kOjYE-wLAt0XLebEirt_G-Xrk);
-    opacity: 0.03;
+    background-color: #fdf8f8;
+    background-image: 
+      radial-gradient(#e5e2e1 0.5px, transparent 0.5px);
+    background-size: 16px 16px;
+    opacity: 0.15;
     pointer-events: none;
   }
 
