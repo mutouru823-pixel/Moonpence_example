@@ -168,7 +168,7 @@ const authors = [
     styleProfile: { rhythm: 78, lexical: 60, emotional: 75, depth: 78 },
     tags: ['青春', '叛逆', '经典']
   }
-const PORT = process.env.PORT || 3001;
+];
 
 // 使用 DeepSeek API 润色文本
 async function polishText(text, author, intensity) {
