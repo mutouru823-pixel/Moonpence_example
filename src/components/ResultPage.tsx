@@ -7,53 +7,65 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
   const [copied, setCopied] = useState(false);
   const { polishResult } = useAppContext();
 
-  const defaultResult = {
-    polishedText: "数字精密与古典文学的交汇处，为现代学者创造了一个独特的空间。在这个数字殿堂中，一个词的重量不仅由其定义衡量，还由其在句子架构中的共鸣频率决定。我们发现，最深刻的洞见往往存在于最安静的过渡处，在墨水与数字羊皮纸相遇的地方。",
-    styleProfile: {
-      rhythm: 92,
-      lexical: 85,
-      emotional: 78,
-      depth: 94
-    },
-    analysis: [
-      {
-        title: "句式韵律",
-        description: "通过变化句子长度增强了节奏感，模仿古典哲学论文的潮起潮落。"
-      },
-      {
-        title: "词汇精准",
-        description: "用精确、富有感染力的术语替换了通用动词，提高了文章的学术权威性。"
-      },
-      {
-        title: "氛围统一",
-        description: "将隐喻与'现代藏书家'美学相融合，确保了物质工艺与数字空间意象的一致性。"
-      }
-    ],
-    tags: ["学术精炼", "重度风格化"]
-  };
-
-  const result = polishResult || defaultResult;
-
   const handleCopy = () => {
-    navigator.clipboard.writeText(result.polishedText);
+    if (!polishResult) return;
+    navigator.clipboard.writeText(polishResult.polishedText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  // 如果没有润色结果，显示空状态
+  if (!polishResult) {
+    return (
+      <div className="min-h-screen text-on-surface relative bg-surface selection:bg-tertiary-fixed pb-20" style={{ backgroundColor: '#fdf8f8' }}>
+        <header className="fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-container-margin h-14 md:h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 safe-area-top">
+          <div className="flex items-center gap-3">
+            <span className="material-symbols-outlined text-primary text-2xl">menu_book</span>
+            <h1 className="text-xl md:text-headline-lg-mobile font-bold md:font-headline-lg-mobile md:font-headline-lg text-primary italic">
+              Moonpence
+            </h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary cursor-pointer hover:opacity-80 text-2xl">account_circle</span>
+          </div>
+        </header>
+
+        <main className="pt-20 md:pt-24 pb-8 px-4 md:px-container-margin max-w-2xl mx-auto relative z-10 min-h-[70vh] flex flex-col items-center justify-center">
+          <div className="text-center space-y-6 animate-fade-in">
+            <span className="material-symbols-outlined text-8xl text-outline-variant opacity-30">edit_document</span>
+            <div>
+              <h2 className="text-xl md:text-headline-lg text-primary font-medium mb-2">还没有润色成果</h2>
+              <p className="text-body-md text-on-surface-variant">
+                先去润色页面写点什么，再回来看看吧！
+              </p>
+            </div>
+            <button 
+              onClick={onBack}
+              className="inline-flex items-center gap-2 bg-primary text-on-primary py-3 px-6 rounded-lg font-label-md text-sm hover:opacity-90 active:scale-[0.98] transition-all"
+            >
+              <span className="material-symbols-outlined">history_edu</span>
+              去润色
+            </button>
+          </div>
+        </main>
+
+        <BottomNav currentPage="result" onNavigate={onNavigate} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen text-on-surface relative bg-surface selection:bg-tertiary-fixed pb-20" style={{ backgroundColor: '#fdf8f8' }}>
       
       <header className="fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-container-margin h-14 md:h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 safe-area-top">
-        <div className="flex items-center gap-2 md:gap-2">
+        <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-primary text-2xl">menu_book</span>
-          <h1 className="text-xl md:text-headline-lg-mobile md:text-headline-lg font-bold md:font-headline-lg-mobile md:font-headline-lg text-primary italic">
+          <h1 className="text-xl md:text-headline-lg-mobile font-bold md:font-headline-lg-mobile md:font-headline-lg text-primary italic">
             Moonpence
           </h1>
         </div>
         <div className="flex items-center gap-2">
-          <button className="material-symbols-outlined text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 duration-150 text-2xl">
-            account_circle
-          </button>
+          <span className="material-symbols-outlined text-primary cursor-pointer hover:opacity-80 text-2xl">account_circle</span>
         </div>
       </header>
 
@@ -65,7 +77,7 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
             <span className="font-label-md text-xs md:text-label-md uppercase tracking-widest">润色成果</span>
           </div>
           <div className="flex flex-wrap gap-2 md:gap-stack-sm items-center mt-2">
-            {result.tags.map((tag, index) => (
+            {polishResult.tags.map((tag, index) => (
               <span key={index} className="bg-primary-container text-on-primary-container px-3 md:px-4 py-1 rounded-full font-label-md text-xs md:text-label-md">
                 {tag}
               </span>
@@ -77,7 +89,7 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
           <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{ backgroundColor: '#1c1b1b' }}></div>
           <div className="relative z-10">
             <p className="font-quote-block text-lg md:text-quote-block leading-relaxed text-on-surface italic first-letter:text-4xl md:first-letter:text-5xl first-letter:font-bold first-letter:mr-2 md:first-letter:mr-3 first-letter:float-left first-letter:mt-1">
-              {result.polishedText}
+              {polishResult.polishedText}
             </p>
             <div className="mt-4 md:mt-stack-md pt-4 md:pt-stack-md border-t border-outline-variant/20 flex flex-col md:flex-row justify-between items-end gap-4">
               <div className="flex flex-col">
@@ -103,11 +115,11 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
               </div>
               <div className="flex flex-col">
                 <div className="flex justify-between items-end mb-1">
-                  <span className="text-2xl md:text-display-lg leading-none font-bold">{result.styleProfile.rhythm}</span>
+                  <span className="text-2xl md:text-display-lg leading-none font-bold">{polishResult.styleProfile.rhythm}</span>
                   <span className="text-[10px] md:text-xs opacity-60">韵律指数</span>
                 </div>
                 <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-primary h-full" style={{ width: `${result.styleProfile.rhythm}%` }}></div>
+                  <div className="bg-primary h-full" style={{ width: `${polishResult.styleProfile.rhythm}%` }}></div>
                 </div>
               </div>
             </div>
@@ -119,11 +131,11 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
               </div>
               <div className="flex flex-col">
                 <div className="flex justify-between items-end mb-1">
-                  <span className="text-2xl md:text-display-lg leading-none font-bold">{result.styleProfile.lexical}</span>
+                  <span className="text-2xl md:text-display-lg leading-none font-bold">{polishResult.styleProfile.lexical}</span>
                   <span className="text-[10px] md:text-xs opacity-60">词汇丰富度</span>
                 </div>
                 <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-primary h-full" style={{ width: `${result.styleProfile.lexical}%` }}></div>
+                  <div className="bg-primary h-full" style={{ width: `${polishResult.styleProfile.lexical}%` }}></div>
                 </div>
               </div>
             </div>
@@ -135,11 +147,11 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
               </div>
               <div className="flex flex-col">
                 <div className="flex justify-between items-end mb-1">
-                  <span className="text-2xl md:text-display-lg leading-none font-bold">{result.styleProfile.emotional}</span>
+                  <span className="text-2xl md:text-display-lg leading-none font-bold">{polishResult.styleProfile.emotional}</span>
                   <span className="text-[10px] md:text-xs opacity-60">情感指数</span>
                 </div>
                 <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-primary h-full" style={{ width: `${result.styleProfile.emotional}%` }}></div>
+                  <div className="bg-primary h-full" style={{ width: `${polishResult.styleProfile.emotional}%` }}></div>
                 </div>
               </div>
             </div>
@@ -151,11 +163,11 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
               </div>
               <div className="flex flex-col">
                 <div className="flex justify-between items-end mb-1">
-                  <span className="text-2xl md:text-display-lg leading-none font-bold">{result.styleProfile.depth}</span>
+                  <span className="text-2xl md:text-display-lg leading-none font-bold">{polishResult.styleProfile.depth}</span>
                   <span className="text-[10px] md:text-xs opacity-60">深度指数</span>
                 </div>
                 <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-primary h-full" style={{ width: `${result.styleProfile.depth}%` }}></div>
+                  <div className="bg-primary h-full" style={{ width: `${polishResult.styleProfile.depth}%` }}></div>
                 </div>
               </div>
             </div>
@@ -167,7 +179,7 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
           <h3 className="font-title-md text-base md:text-title-md border-b border-primary/10 pb-2">文墨赏析</h3>
           <div className="grid gap-3 md:gap-stack-sm">
             
-            {result.analysis.map((item, index) => (
+            {polishResult.analysis.map((item, index) => (
               <div key={index} className="flex gap-3 md:gap-4 items-start group">
                 <span className="material-symbols-outlined text-tertiary mt-0.5">{index === 0 ? 'architecture' : index === 1 ? 'ink_pen' : 'texture'}</span>
                 <div className="flex-1 min-w-0">
