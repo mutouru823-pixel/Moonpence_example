@@ -1,0 +1,196 @@
+import { Page } from '../App';
+import BottomNav from './BottomNav';
+import { useState } from 'react';
+
+export default function ResultPage({ onBack, onNavigate }: { onBack: () => void, onNavigate: (page: Page) => void }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="min-h-screen text-on-surface relative bg-surface selection:bg-tertiary-fixed pb-24" style={{ backgroundImage: 'url(https://lh3.googleusercontent.com/aida-public/AB6AXuAgv2w0C9It4fOO-3vLhvtdQlyT691_60qux49AXFArGki6vGOuTSPjdmebS6pDJQ-yVEXoeLvOILikI4tVrE5xSK1FkhuulYHtEJsXjyzT1QEdPgsjlNtP3GYmZof8Ff6IBMEWtH5fBfFmghO-SSNEUHWQXLLFOCJFV6z2Dur7RoQpIgNqh8EUjkAt4PcGDr3I0475c8DKMFbv-OQPSFRZwCXGcLQRRWusiIee_DlExSwGzqnq7uY8-MPJOseudbrPfTdaUQRzexM)', backgroundColor: '#fdf8f8', backgroundAttachment: 'fixed', backgroundSize: 'cover' }}>
+      
+      {/* TopAppBar */}
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-container-margin h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10">
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary">menu_book</span>
+          <h1 className="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg text-primary italic">Moonpence</h1>
+        </div>
+        <div className="flex items-center gap-4">
+          <button className="material-symbols-outlined text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 duration-150">account_circle</button>
+        </div>
+      </header>
+
+      <main className="pt-24 pb-8 px-container-margin max-w-[680px] mx-auto relative z-10">
+        
+        {/* Status & Mode Section */}
+        <div className="flex flex-col gap-unit mb-stack-lg animate-fade-in">
+          <div className="flex items-center gap-2 text-on-surface-variant">
+            <span className="material-symbols-outlined text-[18px]">auto_awesome</span>
+            <span className="font-label-md text-label-md uppercase tracking-widest">润色成果 / Polished Result</span>
+          </div>
+          <div className="flex flex-wrap gap-stack-sm items-center mt-2">
+            <span className="bg-primary-container text-on-primary-container px-4 py-1 rounded-full font-label-md text-label-md">
+              Academic Refinement
+            </span>
+            <span className="bg-secondary-container text-on-secondary-container px-4 py-1 rounded-full font-label-md text-label-md">
+              重度风格化
+            </span>
+          </div>
+        </div>
+
+        {/* Main Content Canvas (Polished Text) */}
+        <article className="bg-surface-container-lowest paper-border ink-shadow rounded-lg p-stack-md mb-stack-lg relative overflow-hidden group animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/notebook.png')]"></div>
+          <div className="relative z-10">
+            <p className="font-quote-block text-quote-block leading-relaxed text-on-surface italic first-letter:text-5xl first-letter:font-bold first-letter:mr-3 first-letter:float-left first-letter:mt-1">
+              The intersection of digital precision and classical literature creates a unique space for the modern scholar. Within this digital sanctuary, the weight of a word is measured not just by its definition, but by its resonant frequency within the architecture of a sentence. We find that the most profound insights often reside in the quietest transitions, where ink meets digital parchment.
+            </p>
+            <div className="mt-stack-md pt-stack-md border-t border-outline-variant/20 flex justify-between items-end">
+              <div className="flex flex-col">
+                <span className="font-label-md text-label-md text-on-surface-variant opacity-60">最后修订</span>
+                <span className="font-body-md text-body-md">Today, 2:45 PM</span>
+              </div>
+              <div className="flex gap-stack-sm">
+                <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined" title="Share">share</button>
+                <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined" title="Save as Image">image</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        {/* Multi-dimensional Style Profile */}
+        <section className="mt-stack-lg space-y-stack-md animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <h3 className="font-title-md text-title-md border-b border-primary/10 pb-2">多维风格画像 / Multi-dimensional Style Profile</h3>
+          <div className="grid grid-cols-2 gap-4">
+            
+            <div className="bg-white/40 backdrop-blur-sm p-4 rounded-xl border border-outline-variant/20">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="material-symbols-outlined text-tertiary text-[20px]">rebase_edit</span>
+                <span className="font-label-md text-label-md uppercase">句式韵律</span>
+              </div>
+              <div className="flex flex-col">
+                <div className="flex justify-between items-end mb-1">
+                  <span className="text-display-lg leading-none font-bold">92</span>
+                  <span className="text-[12px] opacity-60">Rhythm Index</span>
+                </div>
+                <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-primary h-full w-[92%]"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/40 backdrop-blur-sm p-4 rounded-xl border border-outline-variant/20">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="material-symbols-outlined text-tertiary text-[20px]">temp_preferences_custom</span>
+                <span className="font-label-md text-label-md uppercase">用词丰度</span>
+              </div>
+              <div className="flex flex-col">
+                <div className="flex justify-between items-end mb-1">
+                  <span className="text-display-lg leading-none font-bold">85</span>
+                  <span className="text-[12px] opacity-60">Lexical richness</span>
+                </div>
+                <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-primary h-full w-[85%]"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/40 backdrop-blur-sm p-4 rounded-xl border border-outline-variant/20">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="material-symbols-outlined text-tertiary text-[20px]">psychology_alt</span>
+                <span className="font-label-md text-label-md uppercase">情感基调</span>
+              </div>
+              <div className="flex flex-col">
+                <div className="flex justify-between items-end mb-1">
+                  <span className="text-display-lg leading-none font-bold">78</span>
+                  <span className="text-[12px] opacity-60">Emotional Tone</span>
+                </div>
+                <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-primary h-full w-[78%]"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/40 backdrop-blur-sm p-4 rounded-xl border border-outline-variant/20">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="material-symbols-outlined text-tertiary text-[20px]">book_2</span>
+                <span className="font-label-md text-label-md uppercase">学术深度</span>
+              </div>
+              <div className="flex flex-col">
+                <div className="flex justify-between items-end mb-1">
+                  <span className="text-display-lg leading-none font-bold">94</span>
+                  <span className="text-[12px] opacity-60">Depth</span>
+                </div>
+                <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-primary h-full w-[94%]"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Analysis Mode: Stylistic Points */}
+        <section className="mt-stack-lg space-y-stack-md animate-fade-in" style={{ animationDelay: '0.3s' }}>
+          <h3 className="font-title-md text-title-md border-b border-primary/10 pb-2">文墨赏析 / Stylistic Analysis</h3>
+          <div className="grid gap-stack-sm">
+            
+            <div className="flex gap-4 items-start group">
+              <span className="material-symbols-outlined text-tertiary mt-1">architecture</span>
+              <div>
+                <h4 className="font-label-md text-label-md text-primary">Syntactic Rhythms</h4>
+                <p className="font-body-md text-body-md text-on-surface-variant">Enhanced the cadence by varying sentence lengths, mirroring the ebb and flow of classical philosophical treatises.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start group">
+              <span className="material-symbols-outlined text-tertiary mt-1">ink_pen</span>
+              <div>
+                <h4 className="font-label-md text-label-md text-primary">Lexical Precision</h4>
+                <p className="font-body-md text-body-md text-on-surface-variant">Substituted generic verbs with precise, evocative terminology to heighten the intellectual authority of the passage.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start group">
+              <span className="material-symbols-outlined text-tertiary mt-1">texture</span>
+              <div>
+                <h4 className="font-label-md text-label-md text-primary">Atmospheric Cohesion</h4>
+                <p className="font-body-md text-body-md text-on-surface-variant">Aligned metaphors with the 'Modern Bibliophile' aesthetic, ensuring consistent imagery of physical craft and digital space.</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* Interaction Bar */}
+        <div className="mt-stack-lg flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+          <button 
+            onClick={handleCopy}
+            className={`flex-1 py-4 px-6 rounded-[0.5rem] font-label-md text-label-md flex justify-center items-center gap-2 hover:opacity-90 transition-all active:scale-[0.98] ${copied ? 'bg-tertiary-fixed text-on-tertiary-fixed' : 'bg-primary text-on-primary'}`}
+          >
+            <span className="material-symbols-outlined text-[20px]">{copied ? 'check' : 'content_copy'}</span>
+            {copied ? '已复制' : '复制到剪贴板'}
+          </button>
+          <button 
+            onClick={onBack}
+            className="flex-1 border border-outline/30 py-4 px-6 rounded-[0.5rem] font-label-md text-label-md flex justify-center items-center gap-2 hover:bg-surface-container-low transition-all active:scale-[0.98] text-primary"
+          >
+            <span className="material-symbols-outlined text-[20px]">history_edu</span>
+            重新润色
+          </button>
+        </div>
+      </main>
+
+      {/* Visual Flair: Subtle Background Image */}
+      <div className="fixed top-[20%] -right-24 opacity-[0.04] pointer-events-none select-none z-0 rotate-12">
+        <img alt="Ink and Parchment" className="w-96" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAycTo7Kyr0dClRakSBJg514vVTOajcfRld7J3J8nkpkovduhupB1_3zQU2tEePAbdiiiqCJXkXnt-4zJ3PBLoH7ZYBxrbNUlr7cNlw7AMKY_5CSDXq0MxS_b1yK7jXmq8xki90hzD0gV-BO5Ut0OcOIDhHT_79qf1jkwaH-Hw477pWxT3BarI9nL4K8va2XvCHhB9l1M99gfK1lM46srsCDlnDMfekmspGBFtZscnnbycfmePVa5T9b3T8T8BlUmXfhA9ZGlwKDKE"/>
+      </div>
+
+      <BottomNav currentPage="result" onNavigate={onNavigate} />
+    </div>
+  );
+}
