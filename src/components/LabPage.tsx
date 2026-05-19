@@ -12,6 +12,8 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
   const [selectedOverlay, setSelectedOverlay] = useState<Author | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [mixedResult, setMixedResult] = useState<any>(null);
+  const [showBaseSelector, setShowBaseSelector] = useState(false);
+  const [showOverlaySelector, setShowOverlaySelector] = useState(false);
 
   useEffect(() => {
     loadAuthors();
@@ -30,6 +32,14 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
     }, 4000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    // 保持权重总和为100
+    const total = baseWeight + overlayWeight;
+    if (total !== 100) {
+      setOverlayWeight(100 - baseWeight);
+    }
+  }, [baseWeight]);
 
   const loadAuthors = async () => {
     try {
@@ -82,9 +92,27 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
     alert('风格已保存到您的个人收藏中！\n这是一项高级功能，敬请期待。');
   };
 
+  const selectNewBase = (author: Author) => {
+    if (author.id !== selectedOverlay?.id) {
+      setSelectedBase(author);
+    } else {
+      alert('不能选择与叠加风格相同的作家');
+    }
+    setShowBaseSelector(false);
+  };
+
+  const selectNewOverlay = (author: Author) => {
+    if (author.id !== selectedBase?.id) {
+      setSelectedOverlay(author);
+    } else {
+      alert('不能选择与基础风格相同的作家');
+    }
+    setShowOverlaySelector(false);
+  };
+
   return (
     <div className="font-body-md text-body-md min-h-screen pb-20 bg-white selection:bg-tertiary-fixed" style={{ backgroundColor: '#fdf8f8' }}>
-      <header className="bg-white/80 backdrop-blur-md flex justify-between items-center px-4 md:px-container-margin h-14 md:h-16 w-full fixed top-0 z-50 border-b border-on-surface/10 safe-area-top">
+      <header className="bg-white/80 backdrop-blur-md flex justify-between items-center px-4 md:px-container-margin h-14 md:h-16 w-full fixed top-0 z-50 border-t-0 border-x-0 border-b border-on-surface/5 safe-area-top">
         <div className="flex items-center gap-3">
           <button className="material-symbols-outlined text-primary hover:opacity-70 transition-opacity text-2xl">menu</button>
           <h1 className="font-label-md text-base md:text-title-md text-primary tracking-widest uppercase italic">
@@ -96,23 +124,23 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
         </div>
       </header>
 
-      <main className="pt-20 md:pt-24 px-4 md:px-container-margin max-w-2xl mx-auto space-y-6 md:space-y-stack-lg bg-white/60 backdrop-blur-md rounded-xl py-8 md:py-12 shadow-sm border border-white/40 mt-4 md:mt-0">
+      <main className="pt-20 md:pt-24 px-4 md:px-container-margin max-w-2xl mx-auto space-y-6 md:space-y-stack-lg bg-white/60 backdrop-blur-md rounded-lg py-8 md:py-12 shadow-sm border border-white/40 mt-4 md:mt-0">
         
         <section className="space-y-2 md:space-y-stack-sm text-center">
           <h2 className="font-headline-lg-mobile md:font-headline-lg text-xl md:text-headline-lg-mobile md:text-headline-lg text-primary italic">
             风格调配与创作
           </h2>
           <p className="text-on-surface-variant font-body-md text-sm md:text-body-md max-w-md mx-auto italic">
-            "文学是灵魂的调色盘。"——在这里，您可以解构经典，或通过混合不同的文学基因来创造全新的叙事指纹。
+            "每一个词，都是一次呼吸。"在这里，您可以解构经典，通过混合不同的文学基因来创造全新的叙事指纹。
           </p>
         </section>
 
-        <section className="space-y-2 md:space-y-stack-sm">
+        <section className="space-y-3 md:space-y-stack-md">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-2">
             <label className="font-label-md text-xs md:text-label-md text-on-surface uppercase tracking-wider block">
               分析新样本
             </label>
-            <span className="text-[10px] text-on-surface-variant font-medium">创建自定义文学基因</span>
+            <span className="text-[10px] md:text-xs text-on-surface-variant font-medium">创建自定义文学基因</span>
           </div>
           <div 
             onClick={handleUploadClick}
@@ -124,7 +152,7 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
             <p className="text-on-surface-variant text-center px-2 md:px-stack-md text-sm">
               拖拽文稿至此，或 <span className="text-primary font-bold underline underline-offset-4">点击浏览</span>
             </p>
-            <p className="text-[10px] mt-2 tracking-widest uppercase text-on-surface-variant">
+            <p className="text-[10px] md:text-xs mt-2 tracking-widest uppercase text-on-surface-variant">
               推荐 500+ 字
             </p>
           </div>
@@ -136,35 +164,34 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
           </h3>
           <div className="bg-surface-container-low p-4 md:p-container-margin rounded-lg border border-on-surface/5 space-y-4 md:space-y-6 bg-white/80">
             
+            {/* Base Style */}
             <div className="space-y-2 md:space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-on-surface-variant">
                   基础风格
                 </span>
-                <button 
-                  className="text-primary text-[10px] md:text-xs font-bold underline"
-                  onClick={() => {
-                    const newBase = authors.find(a => a.id !== selectedOverlay?.id);
-                    if (newBase) setSelectedBase(newBase);
-                  }}
-                >
-                  更改
-                </button>
               </div>
-              <div className="flex items-center gap-3 md:gap-4 p-2 md:p-3 bg-white rounded border border-outline-variant/30">
+              <div 
+                onClick={() => setShowBaseSelector(true)}
+                className="flex items-center gap-3 md:gap-4 p-2 md:p-3 bg-white rounded border border-outline-variant/30 cursor-pointer hover:bg-surface-container transition-colors"
+              >
                 <div className="w-9 h-9 md:w-10 md:h-10 bg-primary/5 rounded flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined text-primary">auto_stories</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm md:text-base font-bold">{selectedBase?.name || '请选择'}</p>
+                  <p className="text-sm md:text-base font-bold">{selectedBase?.name || '请选择基础风格'}</p>
                   <p className="text-[10px] md:text-xs text-on-surface-variant line-clamp-1">
-                    {selectedBase?.description || '选择一个基础风格'}
+                    {selectedBase?.description || '点击选择作家'}
                   </p>
                 </div>
+                <span className="material-symbols-outlined text-outline-variant">expand_more</span>
               </div>
               <input 
                 className="w-full h-1 bg-outline-variant/30 rounded-lg appearance-none cursor-pointer accent-primary" 
                 type="range" 
+                min="10" 
+                max="90" 
+                step="5" 
                 value={baseWeight}
                 onChange={e => setBaseWeight(Number(e.target.value))}
               />
@@ -174,35 +201,34 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
               </div>
             </div>
 
+            {/* Overlay Style */}
             <div className="space-y-2 md:space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-on-surface-variant">
                   叠加风格
                 </span>
-                <button 
-                  className="text-primary text-[10px] md:text-xs font-bold underline"
-                  onClick={() => {
-                    const newOverlay = authors.find(a => a.id !== selectedBase?.id);
-                    if (newOverlay) setSelectedOverlay(newOverlay);
-                  }}
-                >
-                  更改
-                </button>
               </div>
-              <div className="flex items-center gap-3 md:gap-4 p-2 md:p-3 bg-white rounded border border-outline-variant/30">
+              <div 
+                onClick={() => setShowOverlaySelector(true)}
+                className="flex items-center gap-3 md:gap-4 p-2 md:p-3 bg-white rounded border border-outline-variant/30 cursor-pointer hover:bg-surface-container transition-colors"
+              >
                 <div className="w-9 h-9 md:w-10 md:h-10 bg-primary/5 rounded flex items-center justify-center shrink-0">
                   <span className="material-symbols-outlined text-primary">architecture</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm md:text-base font-bold">{selectedOverlay?.name || '请选择'}</p>
+                  <p className="text-sm md:text-base font-bold">{selectedOverlay?.name || '请选择叠加风格'}</p>
                   <p className="text-[10px] md:text-xs text-on-surface-variant line-clamp-1">
-                    {selectedOverlay?.description || '选择一个叠加风格'}
+                    {selectedOverlay?.description || '点击选择作家'}
                   </p>
                 </div>
+                <span className="material-symbols-outlined text-outline-variant">expand_more</span>
               </div>
               <input 
                 className="w-full h-1 bg-outline-variant/30 rounded-lg appearance-none cursor-pointer accent-primary" 
                 type="range" 
+                min="10" 
+                max="90" 
+                step="5" 
                 value={overlayWeight}
                 onChange={e => setOverlayWeight(Number(e.target.value))}
               />
@@ -214,14 +240,14 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
 
             <div className="pt-3 md:pt-4 border-t border-outline-variant/20 flex flex-col md:flex-row gap-2 md:gap-3">
               <button 
-                className="flex-1 py-2.5 md:py-3 bg-primary text-on-primary font-label-md text-sm md:text-label-md rounded-[0.5rem] hover:opacity-90 active:scale-95 transition-all ink-shadow"
                 onClick={handleGeneratePreview}
+                className="flex-1 py-2.5 md:py-3 bg-primary text-on-primary font-label-md text-sm md:text-label-md rounded-[0.5rem] hover:opacity-90 active:scale-95 transition-all ink-shadow"
               >
                 生成混合预览
               </button>
               <button 
-                className="px-4 md:px-4 py-2.5 md:py-3 border border-primary text-primary font-label-md text-sm md:text-label-md rounded-[0.5rem] hover:bg-primary/5 transition-all"
                 onClick={handleSaveStyle}
+                className="px-4 md:px-4 py-2.5 md:py-3 border border-primary text-primary font-label-md text-sm md:text-label-md rounded-[0.5rem] hover:bg-primary/5 transition-all"
               >
                 保存为我的风格
               </button>
@@ -303,25 +329,7 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
                   </span>
                   <span className="text-[10px] md:text-xs font-bold">中等偏快</span>
                 </div>
-                <div className="h-5 md:h-6 flex items-end gap-1 overflow-hidden" style={{ alignItems: 'center' }}>
-                  <div className="h-1.5 md:h-2 w-3 md:w-4 bg-primary/40"></div>
-                  <div className="h-3 md:h-4 w-3 md:w-4 bg-primary/60"></div>
-                  <div className="h-4.5 md:h-6 w-3 md:w-4 bg-primary"></div>
-                  <div className="h-3 md:h-4 w-3 md:w-4 bg-primary/60"></div>
-                  <div className="h-1.5 md:h-2 w-3 md:w-4 bg-primary/40"></div>
-                  <div className="h-3 md:h-4 w-3 md:w-4 bg-primary/60"></div>
-                  <div className="h-2 md:h-3 w-3 md:w-4 bg-primary/40"></div>
-                  <div className="h-3.5 md:h-5 w-3 md:w-4 bg-primary/80"></div>
-                </div>
-              </div>
-              
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="font-label-md text-[10px] md:text-xs text-on-surface-variant font-bold">
-                    预测情感张力
-                  </span>
-                </div>
-                <div className="relative h-1.5 md:h-2 w-full bg-outline-variant/20 rounded-full overflow-hidden flex">
+                <div className="h-1.5 md:h-2 w-full bg-outline-variant/30 rounded-full overflow-hidden flex">
                   <div className="h-full bg-primary/80 w-[45%]" title="克制"></div>
                   <div className="h-full bg-outline-variant w-[55%]" title="澎湃"></div>
                 </div>
@@ -350,6 +358,88 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
           </blockquote>
         </footer>
       </main>
+
+      {/* Base Style Selector Modal */}
+      {showBaseSelector && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-end md:items-center justify-center" onClick={() => setShowBaseSelector(false)}>
+          <div className="bg-surface w-full md:w-[450px] md:max-h-[70vh] rounded-t-2xl md:rounded-2xl shadow-xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="p-4 border-b border-outline-variant/20 flex items-center justify-between">
+              <div>
+                <h3 className="text-title-md font-medium text-primary">选择基础风格</h3>
+              </div>
+              <button onClick={() => setShowBaseSelector(false)} className="p-2 hover:bg-surface-container rounded-full">
+                <span className="material-symbols-outlined text-primary">close</span>
+              </button>
+            </div>
+            <div className="p-4 overflow-y-auto max-h-[50vh]">
+              <div className="space-y-2">
+                {authors.map(author => (
+                  <div
+                    key={author.id}
+                    onClick={() => selectNewBase(author)}
+                    className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                      selectedBase?.id === author.id
+                        ? 'border-primary bg-primary-container/20'
+                        : 'border-outline-variant/30 hover:bg-surface-container'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className={`w-10 h-10 rounded flex items-center justify-center ${selectedBase?.id === author.id ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface'}`}>
+                        <span className="material-symbols-outlined text-xl">person</span>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-primary">{author.name}</h4>
+                        <p className="text-xs text-on-surface-variant truncate">{author.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Overlay Style Selector Modal */}
+      {showOverlaySelector && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-end md:items-center justify-center" onClick={() => setShowOverlaySelector(false)}>
+          <div className="bg-surface w-full md:w-[450px] md:max-h-[70vh] rounded-t-2xl md:rounded-2xl shadow-xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="p-4 border-b border-outline-variant/20 flex items-center justify-between">
+              <div>
+                <h3 className="text-title-md font-medium text-primary">选择叠加风格</h3>
+              </div>
+              <button onClick={() => setShowOverlaySelector(false)} className="p-2 hover:bg-surface-container rounded-full">
+                <span className="material-symbols-outlined text-primary">close</span>
+              </button>
+            </div>
+            <div className="p-4 overflow-y-auto max-h-[50vh]">
+              <div className="space-y-2">
+                {authors.map(author => (
+                  <div
+                    key={author.id}
+                    onClick={() => selectNewOverlay(author)}
+                    className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                      selectedOverlay?.id === author.id
+                        ? 'border-primary bg-primary-container/20'
+                        : 'border-outline-variant/30 hover:bg-surface-container'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className={`w-10 h-10 rounded flex items-center justify-center ${selectedOverlay?.id === author.id ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface'}`}>
+                        <span className="material-symbols-outlined text-xl">person</span>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-primary">{author.name}</h4>
+                        <p className="text-xs text-on-surface-variant truncate">{author.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <BottomNav currentPage="lab" onNavigate={onNavigate} />
     </div>

@@ -49,7 +49,6 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
     setSelectedAuthorData(author);
   };
   
-  const intensityMap: Record<number, string> = { 1: '轻度', 2: '适中', 3: '重度' };
   const wordCount = originalText.trim().length > 0 ? originalText.trim().split(/\s+/).filter(w => w.length > 0).length : 0;
   const charCount = originalText.length;
 
@@ -150,20 +149,20 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
           <div className="p-4 md:p-6 rounded-xl border border-outline-variant/10 bg-surface-container-lowest ink-shadow">
             <div className="flex justify-between items-center mb-4 md:mb-6">
               <label className="text-xs md:text-label-md text-on-surface-variant">文风强度</label>
-              <span className="text-xs md:text-label-md text-primary bg-tertiary-fixed px-3 py-1 rounded-full">{intensityMap[polishIntensity]}</span>
+              <span className="text-xs md:text-label-md text-primary bg-tertiary-fixed px-3 py-1 rounded-full">{polishIntensity}%</span>
             </div>
             <input 
               className="w-full h-1 bg-surface-container-highest rounded-lg appearance-none cursor-pointer" 
               type="range" 
-              min="1" 
-              max="3" 
-              step="1" 
+              min="10" 
+              max="100" 
+              step="5" 
               value={polishIntensity}
               onChange={(e) => setPolishIntensity(Number(e.target.value))}
             />
             <div className="flex justify-between mt-2 md:mt-3 text-[10px] md:text-xs text-outline-variant uppercase tracking-wider font-bold">
-              <span>轻度</span>
-              <span>重度</span>
+              <span>保留原作</span>
+              <span>强烈风格</span>
             </div>
           </div>
 

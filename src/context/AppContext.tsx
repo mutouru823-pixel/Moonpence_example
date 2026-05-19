@@ -29,7 +29,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [baseUrl, setBaseUrl] = useState<string>('');
   const [modelName, setModelName] = useState<string>('');
   const [originalText, setOriginalText] = useState<string>('');
-  const [polishIntensity, setPolishIntensity] = useState<number>(2);
+  const [polishIntensity, setPolishIntensity] = useState<number>(50);
   const [polishMode, setPolishMode] = useState<string>('Plain');
   const [selectedAuthor, setSelectedAuthor] = useState<string>('hemingway');
   const [polishResult, setPolishResult] = useState<PolishedResult | null>(null);

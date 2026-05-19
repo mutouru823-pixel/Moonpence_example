@@ -94,17 +94,25 @@ const authors = [
 function polishText(text, author, intensity) {
   const authorData = authors.find(a => a.id === author) || authors[6];
   
-  // 根据强度调整文本
+  // 根据百分比强度调整文本
   let resultText = text;
-  if (intensity >= 2) {
+  const adjustedIntensity = intensity || 50;
+  
+  if (adjustedIntensity >= 30) {
     resultText = text
       .replace(/的/g, Math.random() > 0.5 ? '的' : '之')
       .replace(/了/g, Math.random() > 0.5 ? '了' : '矣');
   }
-  if (intensity >= 3) {
+  if (adjustedIntensity >= 60) {
     const adjectives = ['深邃', '璀璨', '静谧', '炽热', '轻灵'];
     resultText = adjectives[Math.floor(Math.random() * adjectives.length)] + resultText;
   }
+  if (adjustedIntensity >= 90) {
+    resultText = "【" + resultText + "】";
+  }
+  
+  // 根据强度计算风格参数
+  const intensityFactor = (adjustedIntensity - 50) / 50; // -1 到 1 的范围
   
   // 生成风格分析
   const analysisPoints = [
@@ -113,16 +121,22 @@ function polishText(text, author, intensity) {
     { title: '氛围营造', description: `融入${authorData.characteristics.slice(2).join('、')}的特质` }
   ];
 
+  // 根据强度确定标签
+  let intensityTag = '轻微调整';
+  if (adjustedIntensity >= 90) intensityTag = '强烈风格化';
+  else if (adjustedIntensity >= 70) intensityTag = '重度风格化';
+  else if (adjustedIntensity >= 40) intensityTag = '温和润色';
+
   return {
     polishedText: resultText,
     styleProfile: {
-      rhythm: Math.min(100, Math.max(50, authorData.styleProfile.rhythm + (intensity - 2) * 5)),
-      lexical: Math.min(100, Math.max(50, authorData.styleProfile.lexical + (intensity - 2) * 5)),
-      emotional: Math.min(100, Math.max(50, authorData.styleProfile.emotional + (intensity - 2) * 5)),
-      depth: Math.min(100, Math.max(50, authorData.styleProfile.depth + (intensity - 2) * 5))
+      rhythm: Math.min(100, Math.max(20, authorData.styleProfile.rhythm + intensityFactor * 30)),
+      lexical: Math.min(100, Math.max(20, authorData.styleProfile.lexical + intensityFactor * 30)),
+      emotional: Math.min(100, Math.max(20, authorData.styleProfile.emotional + intensityFactor * 30)),
+      depth: Math.min(100, Math.max(20, authorData.styleProfile.depth + intensityFactor * 30))
     },
     analysis: analysisPoints,
-    tags: [...authorData.tags, intensity === 3 ? '重度风格化' : intensity === 2 ? '温和润色' : '轻微调整']
+    tags: [...authorData.tags, intensityTag]
   };
 }
 
@@ -170,7 +184,7 @@ app.post('/api/polish', async (req, res) => {
     
     console.log('Polishing text:', { text: text.substring(0, 50), author, intensity, mode });
     
-    const result = polishText(text, author, intensity || 2);
+    const result = polishText(text, author, intensity || 50);
     res.json(result);
     
   } catch (error) {
