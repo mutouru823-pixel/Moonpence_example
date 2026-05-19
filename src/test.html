@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moonpence Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; background: #fdf8f8; }
+    .container { max-width: 600px; margin: 0 auto; }
+    h1 { color: #000; }
+    .status { padding: 20px; margin: 10px 0; border-radius: 8px; }
+    .ok { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+    button { padding: 10px 20px; background: #000; color: white; border: none; border-radius: 4px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌙 Moonpence 诊断页面</h1>
+    <p>这个页面用于检查应用是否正常工作。</p>
+    
+    <div id="status-container"></div>
+    
+    <button onclick="testAPI()">测试API</button>
+    
+    <h2>可用的访问地址：</h2>
+    <ul>
+      <li><a href="http://localhost:3000">http://localhost:3000</a> (前端开发服务器)</li>
+      <li><a href="http://localhost:3001">http://localhost:3001</a> (后端服务器)</li>
+    </ul>
+  </div>
+
+  <script>
+    function addStatus(message, isOk) {
+      const container = document.getElementById('status-container');
+      const div = document.createElement('div');
+      div.className = `status ${isOk ? 'ok' : 'error'}`;
+      div.textContent = message;
+      container.appendChild(div);
+    }
+
+    async function testAPI() {
+      addStatus('正在测试API...', true);
+      
+      try {
+        const response = await fetch('http://localhost:3001/api/health');
+        const data = await response.json();
+        addStatus(`健康检查: ${JSON.stringify(data)}`, true);
+        
+        const authorsResponse = await fetch('http://localhost:3001/api/authors');
+        const authorsData = await authorsResponse.json();
+        addStatus(`作家列表获取成功，共 ${authorsData.authors.length} 位作家`, true);
+      } catch (error) {
+        addStatus(`错误: ${error}`, false);
+      }
+    }
+    
+    addStatus('HTML文件加载成功！', true);
+    testAPI();
+  </script>
+</body>
+</html>
