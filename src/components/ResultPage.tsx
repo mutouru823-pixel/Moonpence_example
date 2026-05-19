@@ -1,17 +1,48 @@
 import { Page } from '../App';
 import BottomNav from './BottomNav';
 import { useState } from 'react';
+import { useAppContext } from '../context/AppContext';
 
 export default function ResultPage({ onBack, onNavigate }: { onBack: () => void, onNavigate: (page: Page) => void }) {
   const [copied, setCopied] = useState(false);
+  const { polishResult } = useAppContext();
+
+  // Default mock data if no result
+  const defaultResult = {
+    polishedText: "The intersection of digital precision and classical literature creates a unique space for the modern scholar. Within this digital sanctuary, the weight of a word is measured not just by its definition, but by its resonant frequency within the architecture of a sentence. We find that the most profound insights often reside in the quietest transitions, where ink meets digital parchment.",
+    styleProfile: {
+      rhythm: 92,
+      lexical: 85,
+      emotional: 78,
+      depth: 94
+    },
+    analysis: [
+      {
+        title: "Syntactic Rhythms",
+        description: "Enhanced the cadence by varying sentence lengths, mirroring the ebb and flow of classical philosophical treatises."
+      },
+      {
+        title: "Lexical Precision",
+        description: "Substituted generic verbs with precise, evocative terminology to heighten the intellectual authority of the passage."
+      },
+      {
+        title: "Atmospheric Cohesion",
+        description: "Aligned metaphors with the 'Modern Bibliophile' aesthetic, ensuring consistent imagery of physical craft and digital space."
+      }
+    ],
+    tags: ["Academic Refinement", "重度风格化"]
+  };
+
+  const result = polishResult || defaultResult;
 
   const handleCopy = () => {
+    navigator.clipboard.writeText(result.polishedText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="min-h-screen text-on-surface relative bg-surface selection:bg-tertiary-fixed pb-24" style={{ backgroundImage: 'url(https://lh3.googleusercontent.com/aida-public/AB6AXuAgv2w0C9It4fOO-3vLhvtdQlyT691_60qux49AXFArGki6vGOuTSPjdmebS6pDJQ-yVEXoeLvOILikI4tVrE5xSK1FkhuulYHtEJsXjyzT1QEdPgsjlNtP3GYmZof8Ff6IBMEWtH5fBfFmghO-SSNEUHWQXLLFOCJFV6z2Dur7RoQpIgNqh8EUjkAt4PcGDr3I0475c8DKMFbv-OQPSFRZwCXGcLQRRWusiIee_DlExSwGzqnq7uY8-MPJOseudbrPfTdaUQRzexM)', backgroundColor: '#fdf8f8', backgroundAttachment: 'fixed', backgroundSize: 'cover' }}>
+    <div className="min-h-screen text-on-surface relative bg-surface selection:bg-tertiary-fixed pb-24" style={{ backgroundImage: 'url(https://lh3.googleusercontent.com/aida-public/AB6AXuAgv2w0C9It4fOO-3vLhvtdQlyT691_60qux49AXFArGki6vGOufTSjXTbS6pDJQ-yVEXoeLvOILikI4tVrE5xSK1FkhuulYHtEJsXjyzT1QEdPgsjlNtP3GYmZof8Ff6IBMEWtH5fBfFmghO-SSNEUHWQXLLFOCJFV6z2Dur7RoQpIgNqh8EUjkAt4PcGDr3I0475c8DKMFbv-OQPSFRZwCXGcLQRRWusiIee_DlExSwGzqn7uY8-MPJOseudbrPfTdaQRzexM)', backgroundColor: '#fdf8f8', backgroundAttachment: 'fixed', backgroundSize: 'cover' }}>
       
       {/* TopAppBar */}
       <header className="fixed top-0 w-full z-50 flex justify-between items-center px-container-margin h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10">
@@ -33,12 +64,11 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
             <span className="font-label-md text-label-md uppercase tracking-widest">润色成果 / Polished Result</span>
           </div>
           <div className="flex flex-wrap gap-stack-sm items-center mt-2">
-            <span className="bg-primary-container text-on-primary-container px-4 py-1 rounded-full font-label-md text-label-md">
-              Academic Refinement
-            </span>
-            <span className="bg-secondary-container text-on-secondary-container px-4 py-1 rounded-full font-label-md text-label-md">
-              重度风格化
-            </span>
+            {result.tags.map((tag, index) => (
+              <span key={index} className="bg-primary-container text-on-primary-container px-4 py-1 rounded-full font-label-md text-label-md">
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -47,12 +77,12 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
           <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/notebook.png')]"></div>
           <div className="relative z-10">
             <p className="font-quote-block text-quote-block leading-relaxed text-on-surface italic first-letter:text-5xl first-letter:font-bold first-letter:mr-3 first-letter:float-left first-letter:mt-1">
-              The intersection of digital precision and classical literature creates a unique space for the modern scholar. Within this digital sanctuary, the weight of a word is measured not just by its definition, but by its resonant frequency within the architecture of a sentence. We find that the most profound insights often reside in the quietest transitions, where ink meets digital parchment.
+              {result.polishedText}
             </p>
             <div className="mt-stack-md pt-stack-md border-t border-outline-variant/20 flex justify-between items-end">
               <div className="flex flex-col">
                 <span className="font-label-md text-label-md text-on-surface-variant opacity-60">最后修订</span>
-                <span className="font-body-md text-body-md">Today, 2:45 PM</span>
+                <span className="font-body-md text-body-md">{new Date().toLocaleString()}</span>
               </div>
               <div className="flex gap-stack-sm">
                 <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined" title="Share">share</button>
@@ -74,11 +104,11 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
               </div>
               <div className="flex flex-col">
                 <div className="flex justify-between items-end mb-1">
-                  <span className="text-display-lg leading-none font-bold">92</span>
+                  <span className="text-display-lg leading-none font-bold">{result.styleProfile.rhythm}</span>
                   <span className="text-[12px] opacity-60">Rhythm Index</span>
                 </div>
                 <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-primary h-full w-[92%]"></div>
+                  <div className="bg-primary h-full" style={{ width: `${result.styleProfile.rhythm}%` }}></div>
                 </div>
               </div>
             </div>
@@ -90,11 +120,11 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
               </div>
               <div className="flex flex-col">
                 <div className="flex justify-between items-end mb-1">
-                  <span className="text-display-lg leading-none font-bold">85</span>
+                  <span className="text-display-lg leading-none font-bold">{result.styleProfile.lexical}</span>
                   <span className="text-[12px] opacity-60">Lexical richness</span>
                 </div>
                 <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-primary h-full w-[85%]"></div>
+                  <div className="bg-primary h-full" style={{ width: `${result.styleProfile.lexical}%` }}></div>
                 </div>
               </div>
             </div>
@@ -106,11 +136,11 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
               </div>
               <div className="flex flex-col">
                 <div className="flex justify-between items-end mb-1">
-                  <span className="text-display-lg leading-none font-bold">78</span>
+                  <span className="text-display-lg leading-none font-bold">{result.styleProfile.emotional}</span>
                   <span className="text-[12px] opacity-60">Emotional Tone</span>
                 </div>
                 <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-primary h-full w-[78%]"></div>
+                  <div className="bg-primary h-full" style={{ width: `${result.styleProfile.emotional}%` }}></div>
                 </div>
               </div>
             </div>
@@ -122,11 +152,11 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
               </div>
               <div className="flex flex-col">
                 <div className="flex justify-between items-end mb-1">
-                  <span className="text-display-lg leading-none font-bold">94</span>
+                  <span className="text-display-lg leading-none font-bold">{result.styleProfile.depth}</span>
                   <span className="text-[12px] opacity-60">Depth</span>
                 </div>
                 <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-primary h-full w-[94%]"></div>
+                  <div className="bg-primary h-full" style={{ width: `${result.styleProfile.depth}%` }}></div>
                 </div>
               </div>
             </div>
@@ -139,29 +169,15 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
           <h3 className="font-title-md text-title-md border-b border-primary/10 pb-2">文墨赏析 / Stylistic Analysis</h3>
           <div className="grid gap-stack-sm">
             
-            <div className="flex gap-4 items-start group">
-              <span className="material-symbols-outlined text-tertiary mt-1">architecture</span>
-              <div>
-                <h4 className="font-label-md text-label-md text-primary">Syntactic Rhythms</h4>
-                <p className="font-body-md text-body-md text-on-surface-variant">Enhanced the cadence by varying sentence lengths, mirroring the ebb and flow of classical philosophical treatises.</p>
+            {result.analysis.map((item, index) => (
+              <div key={index} className="flex gap-4 items-start group">
+                <span className="material-symbols-outlined text-tertiary mt-1">{index === 0 ? 'architecture' : index === 1 ? 'ink_pen' : 'texture'}</span>
+                <div>
+                  <h4 className="font-label-md text-label-md text-primary">{item.title}</h4>
+                  <p className="font-body-md text-body-md text-on-surface-variant">{item.description}</p>
+                </div>
               </div>
-            </div>
-
-            <div className="flex gap-4 items-start group">
-              <span className="material-symbols-outlined text-tertiary mt-1">ink_pen</span>
-              <div>
-                <h4 className="font-label-md text-label-md text-primary">Lexical Precision</h4>
-                <p className="font-body-md text-body-md text-on-surface-variant">Substituted generic verbs with precise, evocative terminology to heighten the intellectual authority of the passage.</p>
-              </div>
-            </div>
-
-            <div className="flex gap-4 items-start group">
-              <span className="material-symbols-outlined text-tertiary mt-1">texture</span>
-              <div>
-                <h4 className="font-label-md text-label-md text-primary">Atmospheric Cohesion</h4>
-                <p className="font-body-md text-body-md text-on-surface-variant">Aligned metaphors with the 'Modern Bibliophile' aesthetic, ensuring consistent imagery of physical craft and digital space.</p>
-              </div>
-            </div>
+            ))}
 
           </div>
         </section>
@@ -187,7 +203,7 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
 
       {/* Visual Flair: Subtle Background Image */}
       <div className="fixed top-[20%] -right-24 opacity-[0.04] pointer-events-none select-none z-0 rotate-12">
-        <img alt="Ink and Parchment" className="w-96" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAycTo7Kyr0dClRakSBJg514vVTOajcfRld7J3J8nkpkovduhupB1_3zQU2tEePAbdiiiqCJXkXnt-4zJ3PBLoH7ZYBxrbNUlr7cNlw7AMKY_5CSDXq0MxS_b1yK7jXmq8xki90hzD0gV-BO5Ut0OcOIDhHT_79qf1jkwaH-Hw477pWxT3BarI9nL4K8va2XvCHhB9l1M99gfK1lM46srsCDlnDMfekmspGBFtZscnnbycfmePVa5T9b3T8T8BlUmXfhA9ZGlwKDKE"/>
+        <img alt="Ink and Parchment" className="w-96" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAycTo7Kyr0dClRakSBJg514vVTOajcfRld7J3J8nkpkovduhupB1_3zQU2tEePAbdiiiqCJXkXnt-4zJ3PBLoH7ZYBxrbNUlr7cNlwAMKY_5CSDXq0MxS_b1yK7jXmq8xki90hzD0gV-BO5Ut0OcOIDhHT_79qf1jkwaH-Hw477pWxT3BarI9nL4K8va2XvCHhB9l1M99gfK1lM46srsCDlnDMfekmspGBFtZscnnbycfmePVa5T9b3T8T8BlUmXfhA9ZGlwKDKE"/>
       </div>
 
       <BottomNav currentPage="result" onNavigate={onNavigate} />

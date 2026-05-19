@@ -1,12 +1,19 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import { useAppContext } from '../context/AppContext';
 
 export default function SetupPage({ onEnter }: { onEnter: () => void }) {
+  const { setApiKey, setBaseUrl, setModelName } = useAppContext();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isLocalCaching, setIsLocalCaching] = useState(true);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
+  const [formValues, setFormValues] = useState({
+    apiKey: '',
+    baseUrl: '',
+    modelName: ''
+  });
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -19,9 +26,19 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormValues(prev => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    // Save values to context
+    setApiKey(formValues.apiKey);
+    setBaseUrl(formValues.baseUrl);
+    setModelName(formValues.modelName);
 
     // Simulate transition
     setTimeout(() => {
@@ -78,8 +95,10 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
                 <input
                   id="api_key"
                   type={showPassword ? "text" : "password"}
-                  name="api_key"
+                  name="apiKey"
                   placeholder="sk-••••••••••••••••"
+                  value={formValues.apiKey}
+                  onChange={handleInputChange}
                   className="w-full py-stack-sm text-body-md input-underline placeholder:text-outline-variant/60 pr-10"
                 />
                 <button
@@ -102,8 +121,10 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
                 <input
                   id="base_url"
                   type="url"
-                  name="base_url"
+                  name="baseUrl"
                   placeholder="https://api.openai.com/v1"
+                  value={formValues.baseUrl}
+                  onChange={handleInputChange}
                   className="w-full py-stack-sm text-body-md input-underline placeholder:text-outline-variant/60"
                 />
               </div>
@@ -117,8 +138,10 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
                 <input
                   id="model_name"
                   type="text"
-                  name="model_name"
+                  name="modelName"
                   placeholder="gpt-3.5-turbo"
+                  value={formValues.modelName}
+                  onChange={handleInputChange}
                   className="w-full py-stack-sm text-body-md input-underline placeholder:text-outline-variant/60"
                 />
               </div>
@@ -176,7 +199,7 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
                 <img 
                   className="w-full h-full object-cover" 
                   alt="A vintage, minimalist book cover lying flat on a textured ivory surface." 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0pZO4OqjuLmmIH_eA8NkqPyJVH2PkUr309PXeKBzjsHnpcALOAoX9Uav76oq4Ze5GAPQEMH4nKjLBv0eAIdJ4cdtYSZru6SqxDv2JxmbaLKDJVYsGA8Ew3CBHITcMT6lRSwsZWaMYaMPOAt_Qhq-76CKrLPO3jRGO4Cjv6WkvpyFBCKxUALJPfnblMgzK9o50Ha4Ku20kUO6d6gad4MWoHMrW0Nh4gWlsokai1i-h8gygUKFxa9BVvuVzVoXXat9KDE-8WJCrTq8"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0pZO4OqjuLmmIH_eA8NkqPyJVH2PkUr309PXeKBzjsH-Mzeg4Motlwbj34WXcCbk-puLQ2iC2Gu-FEvYQ5LOeu4-1S2dkL3k1Ab1a9QN-w7DV0ZxAdtgxbNSfx1XGfTm8ipngcMteaTqrbuhfQbzQC63ytAGhpwqJiaW8qM0YW33dmwQt38x4ititF-GXvHK-clrYW-Bk9fcPn1kcsYCm_d6y8M_6MwXo52-Dz-AeUTKYRXBxa9BVve17kOjYE-wLAt0XLebEirt_G-Xrk"
                 />
               </div>
             </div>
@@ -186,7 +209,7 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
                 <img 
                   className="w-full h-full object-cover" 
                   alt="A macro shot of a fountain pen nib resting against high-quality cotton paper." 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdWvtSV-6nBHey0lGSwm04EiHYBaoAJxIRbIhA5tAXNWDoM8gNgmNwVbnspCa8j7vqH9gVtap9WrYNW4ODhUOsfY_5WMvfmO68V29JyfYOQZ6FylNm7TRSyufhoch1JSQi9CTlFNlDLoizopTIEZTKFV7PTejjzd9e8whJtnXYNGIXivDNOmWmuDj5iBUhGUyqMt4QCcp2F0g75x1-KBlSP6XGeZRGIQ9t-2BrRDpN3smcrA_b5t5YW0DoJS_1yTy55bSLPSAz3ZI"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdWvtSV-6nBHey0lGSwm04EiHYBaoAJxIRbIhA5tAXNWDoM8gNgmNwVbnspCa8j7vqH9gVtap9WrYNW4ODhUOsfY_5WMvfmO68V29JyfYOQZ6FylNm7TRSyufhoch1JSQi9CTlFNlDLmizopTIEZTKFV7PTejjzd9e8whJtnXYNGIXivDNOmWmuDj5iBUhGUyqMt4QCcp2F0g75x1-KBlSP6XGeZRGIQ9t-2BrRDpN3smcrA_b5t5YW0DoJS_1yTy55bSLPSAz3ZI"
                 />
               </div>
             </div>
@@ -196,14 +219,14 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
                 <img 
                   className="w-full h-full object-cover" 
                   alt="A sparse, clean study desk featuring a single small plant." 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7U9zvV5Sv4vWeAzwKxUA-KiDw-vvU-b0VEruLX_nS3VaXf752jBsPTSwAmfRq8RsvcmrmcdsfZwWAGI6Z5Qu8AOzPY9ukK_dKa9PNE0OgJSbOVCxUvlmTjqT9jUQuXAcct3CUleTQGn4keI5wkmk-JJcD6PvfewWGfigNM3NQB8I6dptR1yuE8nZoUmYSYD_bYBZEC41YTbksqQLH8kiGx5sm3l7W8N9cABXmuky6VPzl1Q2GAfRDpGkqSuO6BMP9Vz-hLGIGbus"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7U9zvV5Sv4vWeAzwK7UA-KiDw-vvU-b0VEruLX_nS3VaXf752jBsPTSwAmfRq8RsvcmrmcdsfZwWAGI6Z5Qu8AOzPY9ukK_dKa9PNE0OgJSbOVCxUvlmTjqT9jUQuXAcct3CUleTQGn4keI5wkmk-JJcD6PvfewWGfigNM3NQB8I6dptR1yuE8nZoUmYSYD_bYBZEC41YTbksqQLH8kiGx5sm3l7W8N9cABXmuky6VPzl1Q2GAkRDpGkqSuO6BMP9Vz-hLGIGbus"
                 />
               </div>
             </div>
           </div>
           
           <p className="text-body-md text-[14px] text-secondary mt-stack-md opacity-60">
-            “文学是灯，照亮通往实验室的小径。”
+            "文学是灯，照亮通往实验室的小径。"
           </p>
         </motion.footer>
       </main>

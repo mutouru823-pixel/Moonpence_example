@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { AnimatePresence } from 'motion/react';
+import { AppProvider } from './context/AppContext';
 import SetupPage from './components/SetupPage';
 import EditorPage from './components/EditorPage';
 import ResultPage from './components/ResultPage';
@@ -7,7 +8,7 @@ import LabPage from './components/LabPage';
 
 export type Page = 'setup' | 'editor' | 'result' | 'lab';
 
-export default function App() {
+function AppContent() {
   const [currentPage, setCurrentPage] = useState<Page>('setup');
 
   const goToPage = (page: Page) => {
@@ -24,3 +25,12 @@ export default function App() {
     </AnimatePresence>
   );
 }
+
+export default function App() {
+  return (
+    <AppProvider>
+      <AppContent />
+    </AppProvider>
+  );
+}
+
