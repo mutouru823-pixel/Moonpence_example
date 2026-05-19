@@ -168,13 +168,13 @@ const authors = [
     styleProfile: { rhythm: 78, lexical: 60, emotional: 75, depth: 78 },
     tags: ['青春', '叛逆', '经典']
   }
-];
+const PORT = process.env.PORT || 3001;
 
 // 使用 DeepSeek API 润色文本
 async function polishText(text, author, intensity) {
   const authorData = authors.find(a => a.id === author) || authors[6];
   const adjustedIntensity = intensity || 50;
-  
+
   // 构建提示词
   const prompt = `请将以下文本用${authorData.name}的写作风格进行润色。
 
@@ -188,10 +188,10 @@ async function polishText(text, author, intensity) {
 ${text}`;
 
   try {
-    const apiKey = 'sk-3131f75b62a2453f859f0fce6719b9b4';
+    const apiKey = process.env.DEEPSEEK_API_KEY || 'sk-3131f75b62a2453f859f0fce6719b9b4';
     const baseUrl = 'https://api.deepseek.com';
     const modelName = 'deepseek-v4-flash';
-    
+
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -424,7 +424,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🌙 Moonpence Server Started`);
   console.log(`📡 Running on: http://localhost:${PORT}`);
   console.log(`🎯 API Health Check: http://localhost:${PORT}/api/health`);
