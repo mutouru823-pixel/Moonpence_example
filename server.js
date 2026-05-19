@@ -244,6 +244,36 @@ app.post('/api/mix-styles', async (req, res) => {
       return res.status(400).json({ error: 'Author not found' });
     }
     
+    // 使用真实的作家数据计算混合指标
+    const totalWeight = baseWeight + overlayWeight;
+    
+    // 计算混合的节奏指数
+    const mixedRhythm = Math.round((baseAuthor.styleProfile.rhythm * baseWeight + overlayAuthor.styleProfile.rhythm * overlayWeight) / totalWeight);
+    
+    // 计算结构平衡度（基于词汇复杂度和深度的混合）
+    const structureBalance = Math.round(
+      ((baseAuthor.styleProfile.lexical * baseWeight + overlayAuthor.styleProfile.lexical * overlayWeight) / totalWeight * 0.5 +
+      (baseAuthor.styleProfile.depth * baseWeight + overlayAuthor.styleProfile.depth * overlayWeight) / totalWeight * 0.5)
+    );
+    
+    // 计算情感张力
+    const tension = Math.round((baseAuthor.styleProfile.emotional * baseWeight + overlayAuthor.styleProfile.emotional * overlayWeight) / totalWeight);
+    
+    // 确定节奏描述
+    let rhythmDescription = "中等";
+    if (mixedRhythm >= 85) rhythmDescription = "快速";
+    else if (mixedRhythm >= 70) rhythmDescription = "中等偏快";
+    else if (mixedRhythm >= 55) rhythmDescription = "中等";
+    else if (mixedRhythm >= 40) rhythmDescription = "中等偏慢";
+    else rhythmDescription = "慢速";
+    
+    // 计算克制/澎湃比例
+    const restraintPercent = Math.round(100 - (mixedRhythm / 100 * 60));
+    const passionPercent = 100 - restraintPercent;
+    
+    // 生成风格描述
+    const styleDescription = `此混合风格融合了${baseAuthor.name}的${baseAuthor.characteristics.slice(0, 1).join('')}，同时融入${overlayAuthor.name}的${overlayAuthor.characteristics.slice(0, 1).join('')}，形成独特的叙事质感。`;
+    
     res.json({
       mixedStyle: {
         name: `${baseAuthor.name} + ${overlayAuthor.name} Blend`,
@@ -252,12 +282,15 @@ app.post('/api/mix-styles', async (req, res) => {
           ...overlayAuthor.characteristics.slice(0, 2)
         ],
         metrics: {
-          structureBalance: Math.round((baseWeight * 68 + overlayWeight * 72) / (baseWeight + overlayWeight)),
-          rhythm: "Moderate Fast",
-          tension: Math.round((baseWeight * 45 + overlayWeight * 55) / (baseWeight + overlayWeight))
-        }
+          structureBalance,
+          rhythm: rhythmDescription,
+          tension,
+          restraintPercent,
+          passionPercent
+        },
+        description: styleDescription
       },
-      preview: "这是一个融合了两种写作风格的文本示例，既有第一位作家的特色，又融入了第二位作家的文风..."
+      preview: `这是一个融合了${baseAuthor.name}和${overlayAuthor.name}两种写作风格的文本示例，既有${baseAuthor.name}的${baseAuthor.characteristics.slice(0, 1).join('')}，又融入了${overlayAuthor.name}的${overlayAuthor.characteristics.slice(0, 1).join('')}...`
     });
     
   } catch (error) {

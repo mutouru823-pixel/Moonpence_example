@@ -7,7 +7,6 @@ import { useAppContext } from '../context/AppContext';
 export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => void }) {
   const { customStyles, addCustomStyle, removeCustomStyle, setSelectedAuthor } = useAppContext();
   
-  const [polygon, setPolygon] = useState('50% 15%, 85% 45%, 65% 80%, 30% 75%, 20% 40%');
   const [baseWeight, setBaseWeight] = useState(70);
   const [overlayWeight, setOverlayWeight] = useState(30);
   const [authors, setAuthors] = useState<Author[]>([]);
@@ -22,20 +21,6 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
 
   useEffect(() => {
     loadAuthors();
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const points = [
-        `50% ${10 + Math.floor(Math.random() * 15)}%`,
-        `${80 + Math.floor(Math.random() * 15)}% ${40 + Math.floor(Math.random() * 15)}%`,
-        `${60 + Math.floor(Math.random() * 20)}% ${75 + Math.floor(Math.random() * 15)}%`,
-        `${25 + Math.floor(Math.random() * 15)}% ${70 + Math.floor(Math.random() * 15)}%`,
-        `${15 + Math.floor(Math.random() * 15)}% ${35 + Math.floor(Math.random() * 15)}%`
-      ].join(', ');
-      setPolygon(points);
-    }, 4000);
-    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -386,67 +371,83 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
           </section>
         )}
 
-        <section className="space-y-3 md:space-y-stack-md">
-          <h3 className="font-label-md text-xs md:text-label-md text-on-surface uppercase tracking-wider block">
-            风格雷达图
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-gutter">
-            
-            <div className="bg-surface-container-low border border-on-surface/5 p-4 md:p-container-margin rounded-lg flex flex-col items-center bg-white/80">
-              <p className="font-label-md text-[10px] md:text-xs mb-4 md:mb-6 self-start text-on-surface uppercase font-bold">
-                新混合文学指纹
-              </p>
-              <div className="relative w-32 h-32 md:w-40 md:h-40 flex items-center justify-center">
-                <div className="absolute inset-0 border border-outline-variant radar-grid opacity-20"></div>
-                <div className="absolute inset-3 md:inset-4 border border-outline-variant radar-grid opacity-20"></div>
-                <div className="absolute inset-6 md:inset-8 border border-outline-variant radar-grid opacity-20"></div>
-                
-                <div 
-                  className="absolute inset-1 md:inset-2 bg-on-tertiary-container/20 radar-grid animate-ink" 
-                  style={{ clipPath: `polygon(${polygon})`, transition: 'clip-path 2s ease' }}
-                ></div>
-              </div>
-              <div className="mt-4 md:mt-6 w-full space-y-2">
-                <div className="flex justify-between text-[10px] md:text-xs font-bold text-on-surface">
-                  <span>结构平衡度</span>
-                  <span>{mixedResult?.mixedStyle?.metrics?.structureBalance || 68}%</span>
-                </div>
-                <div className="w-full bg-outline-variant/30 h-[2px]">
-                  <div className="bg-primary h-full w-[68%]"></div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-surface-container-low border border-on-surface/5 p-4 md:p-container-margin rounded-lg space-y-3 md:space-y-stack-md bg-white/80">
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="font-label-md text-[10px] md:text-xs text-on-surface-variant font-bold">
-                    预期阅读节奏
-                  </span>
-                  <span className="text-[10px] md:text-xs font-bold">中等偏快</span>
-                </div>
-                <div className="h-1.5 md:h-2 w-full bg-outline-variant/30 rounded-full overflow-hidden flex">
-                  <div className="h-full bg-primary/80 w-[45%]" title="克制"></div>
-                  <div className="h-full bg-outline-variant w-[55%]" title="澎湃"></div>
-                </div>
-                <div className="flex justify-between text-[10px] md:text-xs mt-1 text-on-surface-variant font-medium">
-                  <span>克制 (45%)</span>
-                  <span>澎湃 (55%)</span>
-                </div>
-              </div>
+        {showPreview && mixedResult && (
+          <section className="space-y-3 md:space-y-stack-md">
+            <h3 className="font-label-md text-xs md:text-label-md text-on-surface uppercase tracking-wider block">
+              风格雷达图
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-gutter">
               
-              <div>
-                <span className="font-label-md text-[10px] md:text-xs text-on-surface-variant block mb-1 font-bold">
-                  混合风格描述
-                </span>
-                <p className="text-[10px] md:text-xs leading-relaxed text-on-surface-variant italic">
-                  此混合风格在保持浪漫主义情感核心的同时，通过极简主义削减了过度的修辞。产生的文体既具有深度感，又不失现代阅读的流畅。
+              <div className="bg-surface-container-low border border-on-surface/5 p-4 md:p-container-margin rounded-lg flex flex-col items-center bg-white/80">
+                <p className="font-label-md text-[10px] md:text-xs mb-4 md:mb-6 self-start text-on-surface uppercase font-bold">
+                  新混合文学指纹
                 </p>
+                <div className="relative w-32 h-32 md:w-40 md:h-40 flex items-center justify-center">
+                  <div className="absolute inset-0 border border-outline-variant radar-grid opacity-20"></div>
+                  <div className="absolute inset-3 md:inset-4 border border-outline-variant radar-grid opacity-20"></div>
+                  <div className="absolute inset-6 md:inset-8 border border-outline-variant radar-grid opacity-20"></div>
+                  
+                  <div 
+                    className="absolute inset-1 md:inset-2 bg-on-tertiary-container/20 radar-grid" 
+                    style={{ 
+                      clipPath: `polygon(50% ${100 - mixedResult.mixedStyle.metrics.structureBalance * 0.8}%, ${50 + mixedResult.mixedStyle.metrics.tension * 0.4}% 50%, 50% ${20 + mixedResult.mixedStyle.metrics.structureBalance * 0.6}%, ${20 + (100 - mixedResult.mixedStyle.metrics.tension) * 0.3}% 70%, 30% 30%)`,
+                      transition: 'clip-path 0.5s ease' 
+                    }}
+                  ></div>
+                </div>
+                <div className="mt-4 md:mt-6 w-full space-y-2">
+                  <div className="flex justify-between text-[10px] md:text-xs font-bold text-on-surface">
+                    <span>结构平衡度</span>
+                    <span>{mixedResult.mixedStyle.metrics.structureBalance}%</span>
+                  </div>
+                  <div className="w-full bg-outline-variant/30 h-[2px]">
+                    <div 
+                      className="bg-primary h-full transition-all duration-300" 
+                      style={{ width: `${mixedResult.mixedStyle.metrics.structureBalance}%` }}
+                    ></div>
+                  </div>
+                </div>
               </div>
-            </div>
 
-          </div>
-        </section>
+              <div className="bg-surface-container-low border border-on-surface/5 p-4 md:p-container-margin rounded-lg space-y-3 md:space-y-stack-md bg-white/80">
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-label-md text-[10px] md:text-xs text-on-surface-variant font-bold">
+                      预期阅读节奏
+                    </span>
+                    <span className="text-[10px] md:text-xs font-bold">{mixedResult.mixedStyle.metrics.rhythm}</span>
+                  </div>
+                  <div className="h-1.5 md:h-2 w-full bg-outline-variant/30 rounded-full overflow-hidden flex">
+                    <div 
+                      className="h-full bg-primary/80 transition-all duration-300" 
+                      style={{ width: `${mixedResult.mixedStyle.metrics.restraintPercent}%` }}
+                      title="克制"
+                    ></div>
+                    <div 
+                      className="h-full bg-outline-variant transition-all duration-300" 
+                      style={{ width: `${mixedResult.mixedStyle.metrics.passionPercent}%` }}
+                      title="澎湃"
+                    ></div>
+                  </div>
+                  <div className="flex justify-between text-[10px] md:text-xs mt-1 text-on-surface-variant font-medium">
+                    <span>克制 ({mixedResult.mixedStyle.metrics.restraintPercent}%)</span>
+                    <span>澎湃 ({mixedResult.mixedStyle.metrics.passionPercent}%)</span>
+                  </div>
+                </div>
+                
+                <div>
+                  <span className="font-label-md text-[10px] md:text-xs text-on-surface-variant block mb-1 font-bold">
+                    混合风格描述
+                  </span>
+                  <p className="text-[10px] md:text-xs leading-relaxed text-on-surface-variant italic">
+                    {mixedResult.mixedStyle.description}
+                  </p>
+                </div>
+              </div>
+
+            </div>
+          </section>
+        )}
 
         <footer className="text-center py-4 md:py-stack-lg border-t border-outline-variant/10 mt-2">
           <blockquote className="font-quote-block text-lg md:text-[22px] leading-7 md:leading-[32px] text-on-surface-variant/40 italic">
