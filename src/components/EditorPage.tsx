@@ -40,7 +40,7 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
       const author = await apiService.getAuthor(selectedAuthor);
       setSelectedAuthorData(author);
     } catch (error) {
-      console.error('Failed to load author:', error);
+      console.error('加载作家失败:', error);
     }
   };
 
@@ -67,7 +67,7 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
       setPolishResult(result);
       onPolish();
     } catch (error) {
-      console.error('Failed to polish text:', error);
+      console.error('润色失败:', error);
       alert('文本润色失败，请检查网络连接或重试');
     } finally {
       setIsLoading(false);
@@ -94,7 +94,7 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
         
         <section className="mb-6 md:mb-stack-lg animate-fade-in" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-center justify-between mb-3 md:mb-stack-sm">
-            <span className="text-xs md:text-label-md text-on-surface-variant uppercase tracking-widest">作家选择 / WRITER SELECTION</span>
+            <span className="text-xs md:text-label-md text-on-surface-variant uppercase tracking-widest">选择作家</span>
             <button 
               className="text-xs md:text-label-md text-on-surface-variant flex items-center gap-1 hover:text-primary transition-colors group"
               onClick={() => setAuthorSelectorOpen(true)}
@@ -112,10 +112,10 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
             </div>
             <div className="flex-1 min-w-0">
               <h2 className="text-base md:text-title-md text-primary mb-1 font-medium">
-                {selectedAuthorData?.name || 'Ernest Hemingway'}
+                {selectedAuthorData?.name || '加载中...'}
               </h2>
               <p className="text-xs md:text-label-md text-on-surface-variant italic font-normal truncate">
-                {selectedAuthorData?.description || 'Short, rhythmic sentences. Direct imagery'}
+                {selectedAuthorData?.description || '正在获取作家信息'}
               </p>
             </div>
             <span className="material-symbols-outlined text-outline-variant text-xl">chevron_right</span>
@@ -125,7 +125,7 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
         <section className="flex-1 flex flex-col mb-6 md:mb-stack-lg animate-fade-in" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center justify-between mb-3 md:mb-4">
             <label className="text-xs md:text-label-md text-on-surface-variant uppercase tracking-widest" htmlFor="editor">
-              原文输入 / ORIGINAL TEXT
+              原文输入
             </label>
             <span className="text-xs md:text-label-md text-outline-variant font-normal">
               {charCount} 字符 / {wordCount} 词
@@ -149,7 +149,7 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
         <section className="space-y-4 md:space-y-stack-md mb-6 md:mb-stack-lg animate-fade-in" style={{ animationDelay: '0.3s' }}>
           <div className="p-4 md:p-6 rounded-xl border border-outline-variant/10 bg-surface-container-lowest ink-shadow">
             <div className="flex justify-between items-center mb-4 md:mb-6">
-              <label className="text-xs md:text-label-md text-on-surface-variant">文风强度 / STYLE INTENSITY</label>
+              <label className="text-xs md:text-label-md text-on-surface-variant">文风强度</label>
               <span className="text-xs md:text-label-md text-primary bg-tertiary-fixed px-3 py-1 rounded-full">{intensityMap[polishIntensity]}</span>
             </div>
             <input 
@@ -162,13 +162,13 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
               onChange={(e) => setPolishIntensity(Number(e.target.value))}
             />
             <div className="flex justify-between mt-2 md:mt-3 text-[10px] md:text-xs text-outline-variant uppercase tracking-wider font-bold">
-              <span>轻度 (Light)</span>
-              <span>重度 (Heavy)</span>
+              <span>轻度</span>
+              <span>重度</span>
             </div>
           </div>
 
           <div className="p-4 md:p-6 rounded-xl border border-outline-variant/10 bg-surface-container-lowest ink-shadow">
-            <label className="text-xs md:text-label-md text-on-surface-variant block mb-3 md:mb-4">输出模式 / OUTPUT MODE</label>
+            <label className="text-xs md:text-label-md text-on-surface-variant block mb-3 md:mb-4">输出模式</label>
             <div className="flex p-1 bg-surface-container-high rounded-xl">
               {['Plain', 'Side-by-side', 'Analysis'].map((m) => (
                 <button 
@@ -189,11 +189,11 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
             disabled={originalText.trim().length === 0}
             className="w-full bg-primary text-surface py-4 md:py-5 rounded-xl text-sm md:text-label-md flex items-center justify-center gap-2 md:gap-3 hover:opacity-90 active:scale-[0.98] transition-all ink-shadow disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span className="tracking-widest">开始润色 (Start Polishing)</span>
+            <span className="tracking-widest">开始润色</span>
             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>auto_fix_high</span>
           </button>
           <p className="text-center mt-4 md:mt-6 text-xs md:text-label-md text-outline-variant italic opacity-60 font-quote-block">
-            "There is nothing to writing. All you do is sit down at a typewriter and bleed."
+            "写作的诀窍，就是坐下来开始写。"
           </p>
         </footer>
       </main>

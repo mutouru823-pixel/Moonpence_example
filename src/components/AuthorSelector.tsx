@@ -31,7 +31,7 @@ export default function AuthorSelector({
       const data = await apiService.getAuthors();
       setAuthors(data);
     } catch (error) {
-      console.error('Failed to load authors:', error);
+      console.error('加载作家失败:', error);
     } finally {
       setLoading(false);
     }

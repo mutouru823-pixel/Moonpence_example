@@ -87,7 +87,7 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
             
             <div className="space-y-2 md:space-y-unit">
               <label htmlFor="api_key" className="text-sm md:text-label-md text-secondary uppercase block tracking-wide">
-                API Key
+                API 密钥
               </label>
               <div className="relative group">
                 <input
@@ -114,7 +114,7 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
 
             <div className="space-y-2 md:space-y-unit">
               <label htmlFor="base_url" className="text-sm md:text-label-md text-secondary uppercase block tracking-wide">
-                Base URL
+                基础地址
               </label>
               <div className="relative">
                 <input
@@ -131,7 +131,7 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
 
             <div className="space-y-2 md:space-y-unit">
               <label htmlFor="model_name" className="text-sm md:text-label-md text-secondary uppercase block tracking-wide">
-                Model Name
+                模型名称
               </label>
               <div className="relative">
                 <input
@@ -148,7 +148,7 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
 
             <div className="flex items-center justify-between py-3 md:py-stack-sm border-b border-outline-variant/10">
               <div className="flex-1 pr-4">
-                <h3 className="text-sm md:text-label-md text-on-surface font-medium">本地缓存 (Local Caching)</h3>
+                <h3 className="text-sm md:text-label-md text-on-surface font-medium">本地缓存</h3>
                 <p className="text-xs text-secondary leading-tight opacity-70 mt-1">加快后续访问速度，保护您的创作隐私</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">

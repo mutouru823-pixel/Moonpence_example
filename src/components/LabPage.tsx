@@ -1,11 +1,21 @@
 import { Page } from '../App';
 import BottomNav from './BottomNav';
 import { useState, useEffect } from 'react';
+import { apiService, Author } from '../services/api';
 
 export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => void }) {
   const [polygon, setPolygon] = useState('50% 15%, 85% 45%, 65% 80%, 30% 75%, 20% 40%');
   const [baseWeight, setBaseWeight] = useState(70);
   const [overlayWeight, setOverlayWeight] = useState(30);
+  const [authors, setAuthors] = useState<Author[]>([]);
+  const [selectedBase, setSelectedBase] = useState<Author | null>(null);
+  const [selectedOverlay, setSelectedOverlay] = useState<Author | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const [mixedResult, setMixedResult] = useState<any>(null);
+
+  useEffect(() => {
+    loadAuthors();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -21,16 +31,55 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
     return () => clearInterval(interval);
   }, []);
 
+  const loadAuthors = async () => {
+    try {
+      const data = await apiService.getAuthors();
+      setAuthors(data);
+      if (data.length >= 2) {
+        setSelectedBase(data[0]);
+        setSelectedOverlay(data[1]);
+      }
+    } catch (error) {
+      console.error('加载作家失败:', error);
+    }
+  };
+
   const handleUploadClick = () => {
     const input = document.createElement('input');
     input.type = 'file';
+    input.accept = '.txt,.doc,.docx';
     input.onchange = e => {
       const target = e.target as HTMLInputElement;
       if (target.files && target.files.length > 0) {
-        alert(`分析中: ${target.files[0].name}...`);
+        alert(`正在分析: ${target.files[0].name}...\n\n这是一项高级功能，敬请期待！`);
       }
     };
     input.click();
+  };
+
+  const handleGeneratePreview = async () => {
+    if (!selectedBase || !selectedOverlay) {
+      alert('请先选择两种文学风格');
+      return;
+    }
+
+    try {
+      const result = await apiService.mixStyles({
+        baseStyle: selectedBase.id,
+        overlayStyle: selectedOverlay.id,
+        baseWeight,
+        overlayWeight
+      });
+      setMixedResult(result);
+      setShowPreview(true);
+    } catch (error) {
+      console.error('生成预览失败:', error);
+      alert('生成失败，请重试');
+    }
+  };
+
+  const handleSaveStyle = () => {
+    alert('风格已保存到您的个人收藏中！\n这是一项高级功能，敬请期待。');
   };
 
   return (
@@ -61,7 +110,7 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
         <section className="space-y-2 md:space-y-stack-sm">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-2">
             <label className="font-label-md text-xs md:text-label-md text-on-surface uppercase tracking-wider block">
-              分析新样本 / ANALYZE NEW SAMPLES
+              分析新样本
             </label>
             <span className="text-[10px] text-on-surface-variant font-medium">创建自定义文学基因</span>
           </div>
@@ -76,23 +125,29 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
               拖拽文稿至此，或 <span className="text-primary font-bold underline underline-offset-4">点击浏览</span>
             </p>
             <p className="text-[10px] mt-2 tracking-widest uppercase text-on-surface-variant">
-              Recommended 500+ words
+              推荐 500+ 字
             </p>
           </div>
         </section>
 
         <section className="space-y-3 md:space-y-stack-md">
           <h3 className="font-label-md text-xs md:text-label-md text-on-surface uppercase tracking-wider block">
-            风格调配 / STYLE MIXER
+            风格调配
           </h3>
           <div className="bg-surface-container-low p-4 md:p-container-margin rounded-lg border border-on-surface/5 space-y-4 md:space-y-6 bg-white/80">
             
             <div className="space-y-2 md:space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-                  基础风格 / BASE STYLE
+                  基础风格
                 </span>
-                <button className="text-primary text-[10px] md:text-xs font-bold underline">
+                <button 
+                  className="text-primary text-[10px] md:text-xs font-bold underline"
+                  onClick={() => {
+                    const newBase = authors.find(a => a.id !== selectedOverlay?.id);
+                    if (newBase) setSelectedBase(newBase);
+                  }}
+                >
                   更改
                 </button>
               </div>
@@ -101,9 +156,9 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
                   <span className="material-symbols-outlined text-primary">auto_stories</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm md:text-base font-bold">19世纪浪漫主义</p>
+                  <p className="text-sm md:text-base font-bold">{selectedBase?.name || '请选择'}</p>
                   <p className="text-[10px] md:text-xs text-on-surface-variant line-clamp-1">
-                    特点：华丽辞藻、强烈情感，自然崇拜
+                    {selectedBase?.description || '选择一个基础风格'}
                   </p>
                 </div>
               </div>
@@ -122,9 +177,15 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
             <div className="space-y-2 md:space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-                  叠加风格 / OVERLAY STYLE
+                  叠加风格
                 </span>
-                <button className="text-primary text-[10px] md:text-xs font-bold underline">
+                <button 
+                  className="text-primary text-[10px] md:text-xs font-bold underline"
+                  onClick={() => {
+                    const newOverlay = authors.find(a => a.id !== selectedBase?.id);
+                    if (newOverlay) setSelectedOverlay(newOverlay);
+                  }}
+                >
                   更改
                 </button>
               </div>
@@ -133,9 +194,9 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
                   <span className="material-symbols-outlined text-primary">architecture</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm md:text-base font-bold">现代极简主义</p>
+                  <p className="text-sm md:text-base font-bold">{selectedOverlay?.name || '请选择'}</p>
                   <p className="text-[10px] md:text-xs text-on-surface-variant line-clamp-1">
-                    特点：短句、去形容词化、硬朗结构
+                    {selectedOverlay?.description || '选择一个叠加风格'}
                   </p>
                 </div>
               </div>
@@ -152,25 +213,66 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
             </div>
 
             <div className="pt-3 md:pt-4 border-t border-outline-variant/20 flex flex-col md:flex-row gap-2 md:gap-3">
-              <button className="flex-1 py-2.5 md:py-3 bg-primary text-on-primary font-label-md text-sm md:text-label-md rounded-[0.5rem] hover:opacity-90 active:scale-95 transition-all ink-shadow">
+              <button 
+                className="flex-1 py-2.5 md:py-3 bg-primary text-on-primary font-label-md text-sm md:text-label-md rounded-[0.5rem] hover:opacity-90 active:scale-95 transition-all ink-shadow"
+                onClick={handleGeneratePreview}
+              >
                 生成混合预览
               </button>
-              <button className="px-4 md:px-4 py-2.5 md:py-3 border border-primary text-primary font-label-md text-sm md:text-label-md rounded-[0.5rem] hover:bg-primary/5 transition-all">
+              <button 
+                className="px-4 md:px-4 py-2.5 md:py-3 border border-primary text-primary font-label-md text-sm md:text-label-md rounded-[0.5rem] hover:bg-primary/5 transition-all"
+                onClick={handleSaveStyle}
+              >
                 保存为我的风格
               </button>
             </div>
           </div>
         </section>
 
+        {showPreview && mixedResult && (
+          <section className="space-y-3 md:space-y-stack-md">
+            <h3 className="font-label-md text-xs md:text-label-md text-on-surface uppercase tracking-wider block">
+              混合特性分析
+            </h3>
+            <div className="bg-white/80 rounded-lg p-4 border border-outline-variant/20 space-y-3">
+              <div className="text-sm">
+                <span className="font-bold">混合风格：</span>
+                <span>{mixedResult.mixedStyle.name}</span>
+              </div>
+              <div className="text-xs text-on-surface-variant">
+                <span className="font-bold">特点：</span>
+                {mixedResult.mixedStyle.characteristics.join('、')}
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <span className="font-bold">结构平衡度：</span>
+                  {mixedResult.mixedStyle.metrics.structureBalance}%
+                </div>
+                <div>
+                  <span className="font-bold">阅读节奏：</span>
+                  {mixedResult.mixedStyle.metrics.rhythm}
+                </div>
+                <div>
+                  <span className="font-bold">情感张力：</span>
+                  {mixedResult.mixedStyle.metrics.tension}%
+                </div>
+              </div>
+              <div className="pt-2 border-t border-outline-variant/20">
+                <p className="text-xs text-on-surface-variant italic">"{mixedResult.preview}"</p>
+              </div>
+            </div>
+          </section>
+        )}
+
         <section className="space-y-3 md:space-y-stack-md">
           <h3 className="font-label-md text-xs md:text-label-md text-on-surface uppercase tracking-wider block">
-            混合特性分析 / CHARACTERISTICS
+            风格雷达图
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-gutter">
             
             <div className="bg-surface-container-low border border-on-surface/5 p-4 md:p-container-margin rounded-lg flex flex-col items-center bg-white/80">
               <p className="font-label-md text-[10px] md:text-xs mb-4 md:mb-6 self-start text-on-surface uppercase font-bold">
-                新混合文学指纹 / NEW HYBRID FINGERPRINT
+                新混合文学指纹
               </p>
               <div className="relative w-32 h-32 md:w-40 md:h-40 flex items-center justify-center">
                 <div className="absolute inset-0 border border-outline-variant radar-grid opacity-20"></div>
@@ -185,7 +287,7 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
               <div className="mt-4 md:mt-6 w-full space-y-2">
                 <div className="flex justify-between text-[10px] md:text-xs font-bold text-on-surface">
                   <span>结构平衡度</span>
-                  <span>68%</span>
+                  <span>{mixedResult?.mixedStyle?.metrics?.structureBalance || 68}%</span>
                 </div>
                 <div className="w-full bg-outline-variant/30 h-[2px]">
                   <div className="bg-primary h-full w-[68%]"></div>
@@ -197,9 +299,9 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-label-md text-[10px] md:text-xs text-on-surface-variant font-bold">
-                    预期阅读节奏 / RHYTHM
+                    预期阅读节奏
                   </span>
-                  <span className="text-[10px] md:text-xs font-bold">中等偏快 / MODERATE FAST</span>
+                  <span className="text-[10px] md:text-xs font-bold">中等偏快</span>
                 </div>
                 <div className="h-5 md:h-6 flex items-end gap-1 overflow-hidden" style={{ alignItems: 'center' }}>
                   <div className="h-1.5 md:h-2 w-3 md:w-4 bg-primary/40"></div>
@@ -216,12 +318,12 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-label-md text-[10px] md:text-xs text-on-surface-variant font-bold">
-                    预测情感张力 / TENSION
+                    预测情感张力
                   </span>
                 </div>
                 <div className="relative h-1.5 md:h-2 w-full bg-outline-variant/20 rounded-full overflow-hidden flex">
-                  <div className="h-full bg-primary/80 w-[45%]" title="Cold"></div>
-                  <div className="h-full bg-outline-variant w-[55%]" title="Warm"></div>
+                  <div className="h-full bg-primary/80 w-[45%]" title="克制"></div>
+                  <div className="h-full bg-outline-variant w-[55%]" title="澎湃"></div>
                 </div>
                 <div className="flex justify-between text-[10px] md:text-xs mt-1 text-on-surface-variant font-medium">
                   <span>克制 (45%)</span>
@@ -231,7 +333,7 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
               
               <div>
                 <span className="font-label-md text-[10px] md:text-xs text-on-surface-variant block mb-1 font-bold">
-                  混合风格描述 / DESCRIPTION
+                  混合风格描述
                 </span>
                 <p className="text-[10px] md:text-xs leading-relaxed text-on-surface-variant italic">
                   此混合风格在保持浪漫主义情感核心的同时，通过极简主义削减了过度的修辞。产生的文体既具有深度感，又不失现代阅读的流畅。

@@ -8,7 +8,7 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
   const { polishResult } = useAppContext();
 
   const defaultResult = {
-    polishedText: "The intersection of digital precision and classical literature creates a unique space for the modern scholar. Within this digital sanctuary, the weight of a word is measured not just by its definition, but by its resonant frequency within the architecture of a sentence. We find that the most profound insights often reside in the quietest transitions, where ink meets digital parchment.",
+    polishedText: "数字精密与古典文学的交汇处，为现代学者创造了一个独特的空间。在这个数字殿堂中，一个词的重量不仅由其定义衡量，还由其在句子架构中的共鸣频率决定。我们发现，最深刻的洞见往往存在于最安静的过渡处，在墨水与数字羊皮纸相遇的地方。",
     styleProfile: {
       rhythm: 92,
       lexical: 85,
@@ -17,19 +17,19 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
     },
     analysis: [
       {
-        title: "Syntactic Rhythms",
-        description: "Enhanced the cadence by varying sentence lengths, mirroring the ebb and flow of classical philosophical treatises."
+        title: "句式韵律",
+        description: "通过变化句子长度增强了节奏感，模仿古典哲学论文的潮起潮落。"
       },
       {
-        title: "Lexical Precision",
-        description: "Substituted generic verbs with precise, evocative terminology to heighten the intellectual authority of the passage."
+        title: "词汇精准",
+        description: "用精确、富有感染力的术语替换了通用动词，提高了文章的学术权威性。"
       },
       {
-        title: "Atmospheric Cohesion",
-        description: "Aligned metaphors with the 'Modern Bibliophile' aesthetic, ensuring consistent imagery of physical craft and digital space."
+        title: "氛围统一",
+        description: "将隐喻与'现代藏书家'美学相融合，确保了物质工艺与数字空间意象的一致性。"
       }
     ],
-    tags: ["Academic Refinement", "重度风格化"]
+    tags: ["学术精炼", "重度风格化"]
   };
 
   const result = polishResult || defaultResult;
@@ -62,7 +62,7 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
         <div className="flex flex-col gap-2 md:gap-unit mb-6 md:mb-stack-lg animate-fade-in">
           <div className="flex items-center gap-2 text-on-surface-variant">
             <span className="material-symbols-outlined text-lg">auto_awesome</span>
-            <span className="font-label-md text-xs md:text-label-md uppercase tracking-widest">润色成果 / Polished Result</span>
+            <span className="font-label-md text-xs md:text-label-md uppercase tracking-widest">润色成果</span>
           </div>
           <div className="flex flex-wrap gap-2 md:gap-stack-sm items-center mt-2">
             {result.tags.map((tag, index) => (
@@ -82,18 +82,18 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
             <div className="mt-4 md:mt-stack-md pt-4 md:pt-stack-md border-t border-outline-variant/20 flex flex-col md:flex-row justify-between items-end gap-4">
               <div className="flex flex-col">
                 <span className="font-label-md text-xs md:text-label-md text-on-surface-variant opacity-60">最后修订</span>
-                <span className="font-body-md text-sm md:text-body-md">{new Date().toLocaleString()}</span>
+                <span className="font-body-md text-sm md:text-body-md">{new Date().toLocaleString('zh-CN')}</span>
               </div>
               <div className="flex gap-2 md:gap-stack-sm">
-                <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined text-xl" title="Share">share</button>
-                <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined text-xl" title="Save as Image">image</button>
+                <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined text-xl" title="分享">share</button>
+                <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined text-xl" title="保存为图片">image</button>
               </div>
             </div>
           </div>
         </article>
 
         <section className="mt-6 md:mt-stack-lg space-y-4 md:space-y-stack-md animate-fade-in" style={{ animationDelay: '0.2s' }}>
-          <h3 className="font-title-md text-base md:text-title-md border-b border-primary/10 pb-2">多维风格画像 / Multi-dimensional Style Profile</h3>
+          <h3 className="font-title-md text-base md:text-title-md border-b border-primary/10 pb-2">多维风格画像</h3>
           <div className="grid grid-cols-2 gap-3 md:gap-4">
             
             <div className="bg-white/40 backdrop-blur-sm p-3 md:p-4 rounded-xl border border-outline-variant/20">
@@ -104,7 +104,7 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
               <div className="flex flex-col">
                 <div className="flex justify-between items-end mb-1">
                   <span className="text-2xl md:text-display-lg leading-none font-bold">{result.styleProfile.rhythm}</span>
-                  <span className="text-[10px] md:text-xs opacity-60">Rhythm Index</span>
+                  <span className="text-[10px] md:text-xs opacity-60">韵律指数</span>
                 </div>
                 <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
                   <div className="bg-primary h-full" style={{ width: `${result.styleProfile.rhythm}%` }}></div>
@@ -120,7 +120,7 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
               <div className="flex flex-col">
                 <div className="flex justify-between items-end mb-1">
                   <span className="text-2xl md:text-display-lg leading-none font-bold">{result.styleProfile.lexical}</span>
-                  <span className="text-[10px] md:text-xs opacity-60">Lexical richness</span>
+                  <span className="text-[10px] md:text-xs opacity-60">词汇丰富度</span>
                 </div>
                 <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
                   <div className="bg-primary h-full" style={{ width: `${result.styleProfile.lexical}%` }}></div>
@@ -136,7 +136,7 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
               <div className="flex flex-col">
                 <div className="flex justify-between items-end mb-1">
                   <span className="text-2xl md:text-display-lg leading-none font-bold">{result.styleProfile.emotional}</span>
-                  <span className="text-[10px] md:text-xs opacity-60">Emotional Tone</span>
+                  <span className="text-[10px] md:text-xs opacity-60">情感指数</span>
                 </div>
                 <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
                   <div className="bg-primary h-full" style={{ width: `${result.styleProfile.emotional}%` }}></div>
@@ -152,7 +152,7 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
               <div className="flex flex-col">
                 <div className="flex justify-between items-end mb-1">
                   <span className="text-2xl md:text-display-lg leading-none font-bold">{result.styleProfile.depth}</span>
-                  <span className="text-[10px] md:text-xs opacity-60">Depth</span>
+                  <span className="text-[10px] md:text-xs opacity-60">深度指数</span>
                 </div>
                 <div className="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
                   <div className="bg-primary h-full" style={{ width: `${result.styleProfile.depth}%` }}></div>
@@ -164,7 +164,7 @@ export default function ResultPage({ onBack, onNavigate }: { onBack: () => void,
         </section>
 
         <section className="mt-6 md:mt-stack-lg space-y-3 md:space-y-stack-md animate-fade-in" style={{ animationDelay: '0.3s' }}>
-          <h3 className="font-title-md text-base md:text-title-md border-b border-primary/10 pb-2">文墨赏析 / Stylistic Analysis</h3>
+          <h3 className="font-title-md text-base md:text-title-md border-b border-primary/10 pb-2">文墨赏析</h3>
           <div className="grid gap-3 md:gap-stack-sm">
             
             {result.analysis.map((item, index) => (
