@@ -2,8 +2,11 @@ import { Page } from '../App';
 import BottomNav from './BottomNav';
 import { useState, useEffect } from 'react';
 import { apiService, Author } from '../services/api';
+import { useAppContext } from '../context/AppContext';
 
 export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => void }) {
+  const { customStyles, addCustomStyle, removeCustomStyle, setSelectedAuthor } = useAppContext();
+  
   const [polygon, setPolygon] = useState('50% 15%, 85% 45%, 65% 80%, 30% 75%, 20% 40%');
   const [baseWeight, setBaseWeight] = useState(70);
   const [overlayWeight, setOverlayWeight] = useState(30);
@@ -14,6 +17,8 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
   const [mixedResult, setMixedResult] = useState<any>(null);
   const [showBaseSelector, setShowBaseSelector] = useState(false);
   const [showOverlaySelector, setShowOverlaySelector] = useState(false);
+  const [showNameDialog, setShowNameDialog] = useState(false);
+  const [customStyleName, setCustomStyleName] = useState('');
 
   useEffect(() => {
     loadAuthors();
@@ -89,12 +94,57 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
   };
 
   const handleSaveStyle = () => {
-    alert('风格已保存到您的个人收藏中！\n这是一项高级功能，敬请期待。');
+    if (!selectedBase || !selectedOverlay) {
+      alert('请先选择两种文学风格并生成预览');
+      return;
+    }
+    if (!showPreview) {
+      alert('请先生成混合预览');
+      return;
+    }
+    setCustomStyleName(`${selectedBase.name} + ${selectedOverlay.name}`);
+    setShowNameDialog(true);
+  };
+
+  const handleConfirmSave = () => {
+    if (!customStyleName.trim()) {
+      alert('请输入风格名称');
+      return;
+    }
+
+    addCustomStyle({
+      name: customStyleName.trim(),
+      baseStyle: selectedBase!.name,
+      overlayStyle: selectedOverlay!.name,
+      baseWeight,
+      overlayWeight,
+      characteristics: mixedResult?.mixedStyle?.characteristics || [],
+      tags: mixedResult?.mixedStyle?.metrics ? [
+        `${mixedResult.mixedStyle.metrics.structureBalance}%结构`,
+        mixedResult.mixedStyle.metrics.rhythm
+      ] : []
+    });
+
+    alert(`风格"${customStyleName}"已保存到您的创作库中！\n您可以在润色页面选择这个风格。`);
+    setShowNameDialog(false);
+    setCustomStyleName('');
+  };
+
+  const handleSelectStyle = (styleId: string) => {
+    setSelectedAuthor(styleId);
+    onNavigate('editor');
+  };
+
+  const handleDeleteStyle = (styleId: string, styleName: string) => {
+    if (confirm(`确定要删除风格"${styleName}"吗？`)) {
+      removeCustomStyle(styleId);
+    }
   };
 
   const selectNewBase = (author: Author) => {
     if (author.id !== selectedOverlay?.id) {
       setSelectedBase(author);
+      setShowPreview(false);
     } else {
       alert('不能选择与叠加风格相同的作家');
     }
@@ -104,6 +154,7 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
   const selectNewOverlay = (author: Author) => {
     if (author.id !== selectedBase?.id) {
       setSelectedOverlay(author);
+      setShowPreview(false);
     } else {
       alert('不能选择与基础风格相同的作家');
     }
@@ -134,6 +185,45 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
             "每一个词，都是一次呼吸。"在这里，您可以解构经典，通过混合不同的文学基因来创造全新的叙事指纹。
           </p>
         </section>
+
+        {/* 已保存的自定义风格 */}
+        {customStyles.length > 0 && (
+          <section className="space-y-3">
+            <h3 className="font-label-md text-xs md:text-label-md text-on-surface uppercase tracking-wider block">
+              我的创作风格
+            </h3>
+            <div className="bg-white/80 rounded-lg border border-outline-variant/20 overflow-hidden">
+              {customStyles.map((style, index) => (
+                <div 
+                  key={style.id}
+                  className={`p-4 flex items-center gap-3 ${index !== 0 ? 'border-t border-outline-variant/10' : ''}`}
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-bold text-primary">{style.name}</span>
+                      <span className="text-xs text-on-surface-variant bg-tertiary-fixed px-2 py-0.5 rounded-full">自定义</span>
+                    </div>
+                    <p className="text-xs text-on-surface-variant">
+                      {style.baseStyle} ({style.baseWeight}%) + {style.overlayStyle} ({style.overlayWeight}%)
+                    </p>
+                  </div>
+                  <button 
+                    onClick={() => handleSelectStyle(style.id)}
+                    className="px-3 py-1.5 bg-primary text-white text-xs rounded-lg hover:opacity-90"
+                  >
+                    使用
+                  </button>
+                  <button 
+                    onClick={() => handleDeleteStyle(style.id, style.name)}
+                    className="px-2 py-1.5 text-on-surface-variant hover:text-error"
+                  >
+                    <span className="material-symbols-outlined text-lg">delete</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="space-y-3 md:space-y-stack-md">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-2">
@@ -193,7 +283,10 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
                 max="90" 
                 step="5" 
                 value={baseWeight}
-                onChange={e => setBaseWeight(Number(e.target.value))}
+                onChange={e => {
+                  setBaseWeight(Number(e.target.value));
+                  setShowPreview(false);
+                }}
               />
               <div className="flex justify-between text-[10px] md:text-xs text-on-surface-variant">
                 <span>减弱影响</span>
@@ -230,7 +323,10 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
                 max="90" 
                 step="5" 
                 value={overlayWeight}
-                onChange={e => setOverlayWeight(Number(e.target.value))}
+                onChange={e => {
+                  setOverlayWeight(Number(e.target.value));
+                  setShowPreview(false);
+                }}
               />
               <div className="flex justify-between text-[10px] md:text-xs text-on-surface-variant">
                 <span>减弱影响</span>
@@ -436,6 +532,46 @@ export default function LabPage({ onNavigate }: { onNavigate: (page: Page) => vo
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Name Dialog */}
+      {showNameDialog && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4" onClick={() => setShowNameDialog(false)}>
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl" onClick={e => e.stopPropagation()}>
+            <h3 className="text-title-md font-medium text-primary mb-4">保存自定义风格</h3>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-on-surface-variant mb-2">
+                风格名称
+              </label>
+              <input
+                type="text"
+                value={customStyleName}
+                onChange={e => setCustomStyleName(e.target.value)}
+                placeholder="例如：江南+村上混搭风"
+                className="w-full px-4 py-3 border border-outline-variant/30 rounded-lg focus:outline-none focus:border-primary"
+                autoFocus
+              />
+            </div>
+            <div className="mb-4 text-sm text-on-surface-variant">
+              <p><strong>基础风格：</strong>{selectedBase?.name} ({baseWeight}%)</p>
+              <p><strong>叠加风格：</strong>{selectedOverlay?.name} ({overlayWeight}%)</p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowNameDialog(false)}
+                className="flex-1 py-2.5 border border-outline-variant/30 rounded-lg hover:bg-surface-container transition-colors"
+              >
+                取消
+              </button>
+              <button
+                onClick={handleConfirmSave}
+                className="flex-1 py-2.5 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity"
+              >
+                保存
+              </button>
             </div>
           </div>
         </div>

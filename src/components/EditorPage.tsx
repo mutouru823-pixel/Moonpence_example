@@ -16,7 +16,8 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
     selectedAuthor,
     setSelectedAuthor,
     setPolishResult,
-    setIsLoading
+    setIsLoading,
+    getCustomStyleById
   } = useAppContext();
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -37,6 +38,24 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
 
   const loadSelectedAuthor = async () => {
     try {
+      // 检查是否是自定义风格
+      if (selectedAuthor.startsWith('custom_')) {
+        const customStyle = getCustomStyleById(selectedAuthor);
+        if (customStyle) {
+          const authorData: Author = {
+            id: customStyle.id,
+            name: customStyle.name,
+            nameEn: '自定义风格',
+            description: `${customStyle.baseStyle} + ${customStyle.overlayStyle}`,
+            characteristics: customStyle.characteristics,
+            tags: ['自定义', ...customStyle.tags]
+          };
+          setSelectedAuthorData(authorData);
+          return;
+        }
+      }
+      
+      // 否则从API获取
       const author = await apiService.getAuthor(selectedAuthor);
       setSelectedAuthorData(author);
     } catch (error) {

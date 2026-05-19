@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Author } from '../services/api';
 import { apiService } from '../services/api';
+import { useAppContext } from '../context/AppContext';
 
 interface AuthorSelectorProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ export default function AuthorSelector({
   const [authors, setAuthors] = useState<Author[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const { getAllAuthors } = useAppContext();
 
   useEffect(() => {
     if (isOpen) {
@@ -29,7 +31,9 @@ export default function AuthorSelector({
     try {
       setLoading(true);
       const data = await apiService.getAuthors();
-      setAuthors(data);
+      // 合并默认作家和自定义风格
+      const allAuthors = getAllAuthors(data);
+      setAuthors(allAuthors);
     } catch (error) {
       console.error('加载作家失败:', error);
     } finally {
@@ -42,6 +46,10 @@ export default function AuthorSelector({
     author.nameEn.toLowerCase().includes(searchTerm.toLowerCase()) ||
     author.description.includes(searchTerm)
   );
+
+  // 分离默认作家和自定义风格
+  const defaultAuthors = filteredAuthors.filter(author => !author.id.startsWith('custom_'));
+  const customStyles = filteredAuthors.filter(author => author.id.startsWith('custom_'));
 
   const handleSelect = (author: Author) => {
     onSelect(author);
@@ -87,64 +95,138 @@ export default function AuthorSelector({
               <span className="material-symbols-outlined animate-spin text-primary">progress_activity</span>
               <span className="ml-2 text-label-md text-on-surface-variant">加载中...</span>
             </div>
-          ) : filteredAuthors.length === 0 ? (
-            <div className="text-center py-8">
-              <span className="material-symbols-outlined text-4xl text-outline-variant mb-3">person_off</span>
-              <p className="text-body-md text-on-surface-variant">没有找到匹配的作家</p>
-            </div>
           ) : (
-            <div className="space-y-3">
-              {filteredAuthors.map((author) => (
-                <div
-                  key={author.id}
-                  onClick={() => handleSelect(author)}
-                  className={`p-4 rounded-xl border cursor-pointer transition-all hover:bg-surface-container-low ${
-                    selectedAuthorId === author.id
-                      ? 'border-primary bg-primary-container/20'
-                      : 'border-outline-variant/30'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${
-                      selectedAuthorId === author.id ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface'
-                    }`}>
-                      <span className="material-symbols-outlined text-2xl">person</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-label-md font-medium text-primary">{author.name}</h4>
-                        <span className="text-xs text-on-surface-variant">{author.nameEn}</span>
+            <div className="space-y-4">
+              {/* 自定义风格 */}
+              {customStyles.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="material-symbols-outlined text-tertiary text-lg">auto_awesome</span>
+                    <h4 className="text-label-md font-medium text-tertiary">我的创作风格</h4>
+                  </div>
+                  {customStyles.map((author) => (
+                    <div
+                      key={author.id}
+                      onClick={() => handleSelect(author)}
+                      className={`p-4 rounded-xl border cursor-pointer transition-all hover:bg-surface-container-low ${
+                        selectedAuthorId === author.id
+                          ? 'border-primary bg-primary-container/20'
+                          : 'border-outline-variant/30'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${
+                          selectedAuthorId === author.id ? 'bg-primary text-on-primary' : 'bg-tertiary-fixed text-on-tertiary-fixed'
+                        }`}>
+                          <span className="material-symbols-outlined text-2xl">auto_awesome</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-label-md font-medium text-primary">{author.name}</h4>
+                            <span className="text-xs px-2 py-0.5 bg-tertiary-fixed text-on-tertiary-fixed rounded-full">自定义</span>
+                          </div>
+                          <p className="text-xs md:text-label-md text-on-surface-variant mt-1 line-clamp-2">
+                            {author.description}
+                          </p>
+                          <div className="flex flex-wrap gap-1.5 mt-2">
+                            {author.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="px-2 py-0.5 bg-tertiary-fixed/50 text-xs rounded-full text-on-tertiary-fixed"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        {selectedAuthorId === author.id && (
+                          <span className="material-symbols-outlined text-primary">check_circle</span>
+                        )}
                       </div>
-                      <p className="text-xs md:text-label-md text-on-surface-variant mt-1 line-clamp-2">
-                        {author.description}
-                      </p>
-                      <div className="flex flex-wrap gap-1.5 mt-2">
-                        {author.tags.map((tag) => (
+                      <div className="flex flex-wrap gap-1.5 mt-3 ml-15">
+                        {author.characteristics.map((char) => (
                           <span
-                            key={tag}
-                            className="px-2 py-0.5 bg-tertiary-fixed/50 text-xs rounded-full text-on-tertiary-fixed"
+                            key={char}
+                            className="px-2 py-0.5 bg-surface-container text-xs text-on-surface-variant rounded"
                           >
-                            {tag}
+                            {char}
                           </span>
                         ))}
                       </div>
                     </div>
-                    {selectedAuthorId === author.id && (
-                      <span className="material-symbols-outlined text-primary">check_circle</span>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 mt-3 ml-15">
-                    {author.characteristics.map((char) => (
-                      <span
-                        key={char}
-                        className="px-2 py-0.5 bg-surface-container text-xs text-on-surface-variant rounded"
-                      >
-                        {char}
-                      </span>
-                    ))}
-                  </div>
+                  ))}
                 </div>
-              ))}
+              )}
+
+              {/* 默认作家 */}
+              {defaultAuthors.length > 0 && (
+                <div className="space-y-2">
+                  {customStyles.length > 0 && (
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="material-symbols-outlined text-primary text-lg">person</span>
+                      <h4 className="text-label-md font-medium text-primary">经典作家</h4>
+                    </div>
+                  )}
+                  {defaultAuthors.map((author) => (
+                    <div
+                      key={author.id}
+                      onClick={() => handleSelect(author)}
+                      className={`p-4 rounded-xl border cursor-pointer transition-all hover:bg-surface-container-low ${
+                        selectedAuthorId === author.id
+                          ? 'border-primary bg-primary-container/20'
+                          : 'border-outline-variant/30'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${
+                          selectedAuthorId === author.id ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface'
+                        }`}>
+                          <span className="material-symbols-outlined text-2xl">person</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-label-md font-medium text-primary">{author.name}</h4>
+                            <span className="text-xs text-on-surface-variant">{author.nameEn}</span>
+                          </div>
+                          <p className="text-xs md:text-label-md text-on-surface-variant mt-1 line-clamp-2">
+                            {author.description}
+                          </p>
+                          <div className="flex flex-wrap gap-1.5 mt-2">
+                            {author.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="px-2 py-0.5 bg-tertiary-fixed/50 text-xs rounded-full text-on-tertiary-fixed"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        {selectedAuthorId === author.id && (
+                          <span className="material-symbols-outlined text-primary">check_circle</span>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 mt-3 ml-15">
+                        {author.characteristics.map((char) => (
+                          <span
+                            key={char}
+                            className="px-2 py-0.5 bg-surface-container text-xs text-on-surface-variant rounded"
+                          >
+                            {char}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {filteredAuthors.length === 0 && (
+                <div className="text-center py-8">
+                  <span className="material-symbols-outlined text-4xl text-outline-variant mb-3">person_off</span>
+                  <p className="text-body-md text-on-surface-variant">没有找到匹配的作家</p>
+                </div>
+              )}
             </div>
           )}
         </div>
