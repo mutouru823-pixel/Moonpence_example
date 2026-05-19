@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-surface: #fdf8f8;
@@ -32,7 +32,7 @@
   --color-on-tertiary-fixed: #171e06;
 
   --spacing-unit: 8px;
-  --spacing-container-margin: 24px;
+  --spacing-container-margin: 16px;
   --spacing-gutter: 16px;
   --spacing-stack-sm: 12px;
   --spacing-stack-md: 24px;
@@ -80,7 +80,7 @@
   }
 
   .paper-texture {
-    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuCto84nyUeUpymcjniNtiBxNHeemUYzn8NfAF14OpeyH-Mzeg4Motlwbj34WXcCbk-puLQ2iC2Gu-FEvYQ5LOeu4-1S2dkL3k1Ab1a9QN-w7DV0ZxAdtgxbNSfx1XGfTm8ipngcMteaTqrbuhfQbzQC63ytAGhpwqJiaW8qM0YW33dmwQt38x4ititF-GXvHK-clrYW-Bk9fcPn1kcsYCm_d6y8M_6MwXo52-Dz-AeUTKYRXBve17kOjYE-wLAt0XLebEirt_G-Xrk);
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuA0pZO4OqjuLmmIH_eA8NkqPyJVH2PkUr309PXeKBzjsH-Mzeg4Motlwbj34WXcCbk-puLQ2iC2Gu-FEvYQ5LOeu4-1S2dkL3k1Ab1a9QN-w7DV0ZxAdtgxbNSfx1XGfTm8ipngcMteaTqrbuhfQbzQC63ytAGhpwqJiaW8qM0YW33dmwQt38x4ititF-GXvHK-clrYW-Bk9fcPn1kcsYCm_d6y8M_6MwXo52-Dz-AeUTKYRXBxa9BVve17kOjYE-wLAt0XLebEirt_G-Xrk);
     opacity: 0.03;
     pointer-events: none;
   }
@@ -94,7 +94,7 @@
   }
 
   .dashed-border {
-    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23444748' stroke-width='1' stroke-dasharray='8%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23444748' stroke-width='1' stroke-dasharray='8%2c12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
   }
 
   .radar-grid {
@@ -123,10 +123,17 @@
     border-bottom: 1px solid var(--color-primary, #000);
     box-shadow: none;
   }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
 }
 
 .material-symbols-outlined {
-    font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+    font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "OPSZ" 24;
     vertical-align: middle;
 }
 
@@ -141,8 +148,81 @@ input[type="range"]::-webkit-slider-thumb {
     box-shadow: 0 0 0 1px #000;
 }
 
-body {
+/* Mobile-specific styles */
+html, body {
   min-height: max(884px, 100dvh);
   background-color: var(--color-surface, #fdf8f8);
   color: var(--color-on-surface, #1c1b1b);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  overscroll-behavior: none;
+}
+
+/* Prevent text selection on buttons */
+button, .btn {
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+/* Smooth scrolling for iOS */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Better touch targets */
+@media (max-width: 640px) {
+  :root {
+    --spacing-container-margin: 16px;
+    --spacing-stack-md: 20px;
+    --spacing-stack-lg: 32px;
+  }
+
+  .text-display-lg {
+    font-size: 36px;
+    line-height: 44px;
+  }
+  
+  .text-quote-block {
+    font-size: 18px;
+    line-height: 28px;
+  }
+
+  /* Larger touch targets for mobile */
+  button,
+  [role="button"],
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Improve input experience */
+  input, textarea {
+    font-size: 16px !important; /* Prevent iOS zoom */
+  }
+}
+
+/* Optimize for small screens */
+@media (max-width: 480px) {
+  :root {
+    --spacing-container-margin: 12px;
+    --spacing-stack-sm: 10px;
+    --spacing-stack-md: 16px;
+    --spacing-stack-lg: 28px;
+  }
+
+  .text-headline-lg-mobile {
+    font-size: 24px;
+    line-height: 32px;
+  }
+}
+
+/* Fix safe area insets */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }

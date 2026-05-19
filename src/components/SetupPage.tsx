@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useAppContext } from '../context/AppContext';
 
@@ -61,20 +61,20 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
         style={{ transform: `translate(${parallax.x}px, ${parallax.y}px)` }}
       />
 
-      <main className="relative z-10 flex flex-col items-center justify-center min-h-screen px-container-margin py-stack-lg max-w-[1200px] mx-auto">
+      <main className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 md:px-container-margin py-8 md:py-stack-lg max-w-lg mx-auto">
         <motion.header 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="text-center mb-stack-lg"
+          className="text-center mb-8 md:mb-stack-lg"
         >
-          <div className="mb-unit flex justify-center">
-            <span className="material-symbols-outlined text-[40px] text-primary">ink_pen</span>
+          <div className="mb-2 md:mb-unit flex justify-center">
+            <span className="material-symbols-outlined text-4xl md:text-[40px] text-primary">ink_pen</span>
           </div>
-          <h1 className="text-headline-lg-mobile md:text-display-lg text-primary tracking-tight mb-stack-sm font-display-lg">
+          <h1 className="text-3xl md:text-headline-lg-mobile md:text-display-lg text-primary tracking-tight mb-3 md:mb-stack-sm font-bold md:font-display-lg">
             Moonpence
           </h1>
-          <p className="text-title-md text-secondary tracking-wide italic font-title-md">
+          <p className="text-lg md:text-title-md text-secondary tracking-wide italic font-medium md:font-title-md">
             开启您的文学实验室
           </p>
         </motion.header>
@@ -83,12 +83,12 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.15 }}
-          className="w-full max-w-[440px] bg-white border border-outline-variant/30 rounded-xl p-stack-md md:p-stack-lg ink-wash-shadow"
+          className="w-full bg-white border border-outline-variant/30 rounded-xl p-6 md:p-stack-md md:p-stack-lg ink-wash-shadow"
         >
-          <form onSubmit={handleSubmit} className="space-y-stack-md">
+          <form onSubmit={handleSubmit} className="space-y-6 md:space-y-stack-md">
             
-            <div className="space-y-unit">
-              <label htmlFor="api_key" className="text-label-md text-secondary uppercase block">
+            <div className="space-y-2 md:space-y-unit">
+              <label htmlFor="api_key" className="text-sm md:text-label-md text-secondary uppercase block tracking-wide">
                 API Key
               </label>
               <div className="relative group">
@@ -99,12 +99,13 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
                   placeholder="sk-••••••••••••••••"
                   value={formValues.apiKey}
                   onChange={handleInputChange}
-                  className="w-full py-stack-sm text-body-md input-underline placeholder:text-outline-variant/60 pr-10"
+                  className="w-full py-3 md:py-stack-sm text-base md:text-body-md input-underline placeholder:text-outline-variant/60 pr-10"
+                  autoComplete="off"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors cursor-pointer"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 text-outline-variant group-focus-within:text-primary transition-colors cursor-pointer p-2"
                 >
                   <span className="material-symbols-outlined text-xl">
                     {showPassword ? 'visibility' : 'visibility_off'}
@@ -113,8 +114,8 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
               </div>
             </div>
 
-            <div className="space-y-unit">
-              <label htmlFor="base_url" className="text-label-md text-secondary uppercase block">
+            <div className="space-y-2 md:space-y-unit">
+              <label htmlFor="base_url" className="text-sm md:text-label-md text-secondary uppercase block tracking-wide">
                 Base URL
               </label>
               <div className="relative">
@@ -125,13 +126,13 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
                   placeholder="https://api.openai.com/v1"
                   value={formValues.baseUrl}
                   onChange={handleInputChange}
-                  className="w-full py-stack-sm text-body-md input-underline placeholder:text-outline-variant/60"
+                  className="w-full py-3 md:py-stack-sm text-base md:text-body-md input-underline placeholder:text-outline-variant/60"
                 />
               </div>
             </div>
 
-            <div className="space-y-unit">
-              <label htmlFor="model_name" className="text-label-md text-secondary uppercase block">
+            <div className="space-y-2 md:space-y-unit">
+              <label htmlFor="model_name" className="text-sm md:text-label-md text-secondary uppercase block tracking-wide">
                 Model Name
               </label>
               <div className="relative">
@@ -142,15 +143,15 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
                   placeholder="gpt-3.5-turbo"
                   value={formValues.modelName}
                   onChange={handleInputChange}
-                  className="w-full py-stack-sm text-body-md input-underline placeholder:text-outline-variant/60"
+                  className="w-full py-3 md:py-stack-sm text-base md:text-body-md input-underline placeholder:text-outline-variant/60"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-between py-stack-sm border-b border-outline-variant/10">
-              <div>
-                <h3 className="text-label-md text-on-surface">本地缓存 (Local Caching)</h3>
-                <p className="text-[12px] text-secondary leading-tight opacity-70 mt-1">加快后续访问速度，保护您的创作隐私</p>
+            <div className="flex items-center justify-between py-3 md:py-stack-sm border-b border-outline-variant/10">
+              <div className="flex-1 pr-4">
+                <h3 className="text-sm md:text-label-md text-on-surface font-medium">本地缓存 (Local Caching)</h3>
+                <p className="text-xs text-secondary leading-tight opacity-70 mt-1">加快后续访问速度，保护您的创作隐私</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input 
@@ -164,23 +165,23 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
               </label>
             </div>
 
-            <div className="flex items-center justify-center py-stack-sm opacity-20">
+            <div className="flex items-center justify-center py-3 md:py-stack-sm opacity-20">
               <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-primary to-transparent"></div>
-              <span className="material-symbols-outlined text-sm mx-unit">auto_stories</span>
+              <span className="material-symbols-outlined text-sm mx-2 md:mx-unit">auto_stories</span>
               <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-primary to-transparent"></div>
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-primary text-white text-label-md py-stack-sm rounded-lg hover:bg-inverse-surface transition-all duration-300 transform active:scale-[0.98] ink-wash-shadow flex items-center justify-center gap-unit group disabled:opacity-80 rounded-[0.5rem]"
+              className="w-full bg-primary text-white text-sm md:text-label-md py-4 md:py-stack-sm rounded-xl hover:bg-inverse-surface transition-all duration-300 transform active:scale-[0.98] ink-wash-shadow flex items-center justify-center gap-2 md:gap-unit group disabled:opacity-80"
             >
               {isSubmitting ? (
                 <span className="material-symbols-outlined animate-spin text-xl">progress_activity</span>
               ) : (
                 <>
                   <span>进入文学世界</span>
-                  <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+                  <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
                 </>
               )}
             </button>
@@ -191,11 +192,11 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="mt-stack-lg text-center max-w-[600px]"
+          className="mt-8 md:mt-stack-lg text-center max-w-md"
         >
-          <div className="grid grid-cols-3 gap-stack-md opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+          <div className="grid grid-cols-3 gap-3 md:gap-stack-md opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
             <div className="flex flex-col items-center">
-              <div className="w-12 h-16 bg-surface-container-low border border-outline-variant/20 rounded-[0.25rem] mb-unit overflow-hidden">
+              <div className="w-10 h-14 md:w-12 md:h-16 bg-surface-container-low border border-outline-variant/20 rounded mb-1 md:mb-unit overflow-hidden">
                 <img 
                   className="w-full h-full object-cover" 
                   alt="A vintage, minimalist book cover lying flat on a textured ivory surface." 
@@ -204,8 +205,8 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
               </div>
             </div>
             
-            <div className="flex flex-col items-center translate-y-unit">
-              <div className="w-12 h-16 bg-surface-container-low border border-outline-variant/20 rounded-[0.25rem] mb-unit overflow-hidden">
+            <div className="flex flex-col items-center translate-y-1 md:translate-y-unit">
+              <div className="w-10 h-14 md:w-12 md:h-16 bg-surface-container-low border border-outline-variant/20 rounded mb-1 md:mb-unit overflow-hidden">
                 <img 
                   className="w-full h-full object-cover" 
                   alt="A macro shot of a fountain pen nib resting against high-quality cotton paper." 
@@ -215,18 +216,18 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="w-12 h-16 bg-surface-container-low border border-outline-variant/20 rounded-[0.25rem] mb-unit overflow-hidden">
+              <div className="w-10 h-14 md:w-12 md:h-16 bg-surface-container-low border border-outline-variant/20 rounded mb-1 md:mb-unit overflow-hidden">
                 <img 
                   className="w-full h-full object-cover" 
                   alt="A sparse, clean study desk featuring a single small plant." 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7U9zvV5Sv4vWeAzwK7UA-KiDw-vvU-b0VEruLX_nS3VaXf752jBsPTSwAmfRq8RsvcmrmcdsfZwWAGI6Z5Qu8AOzPY9ukK_dKa9PNE0OgJSbOVCxUvlmTjqT9jUQuXAcct3CUleTQGn4keI5wkmk-JJcD6PvfewWGfigNM3NQB8I6dptR1yuE8nZoUmYSYD_bYBZEC41YTbksqQLH8kiGx5sm3l7W8N9cABXmuky6VPzl1Q2GAkRDpGkqSuO6BMP9Vz-hLGIGbus"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7U9zvV5Sv4vWeAzwK7UA-KiDw-vvU-b0VEruLX_nS3VaXf752jBsPTSAmfRq8RsvcmrmcdsfZwWAGI6Z5Qu8AOzPY9ukK_dKa9PNE0OgJSbOVCxUvlmTjqT9jUQuXAcct3CUleTQGn4keI5wkmk-JJcD6PvfewWGfigNM3NQB8I6dptR1yuE8nZoUmYSYD_bYBZEC41YTbksqQLH8kiGx5sm3l7W8N9cABXmuky6VPzl1Q2GAkRDpGkqSuO6BMP9Vz-hLGIGbus"
                 />
               </div>
             </div>
           </div>
           
-          <p className="text-body-md text-[14px] text-secondary mt-stack-md opacity-60">
-            "文学是灯，照亮通往实验室的小径。"
+          <p className="text-sm md:text-body-md text-[14px] text-secondary mt-4 md:mt-stack-md opacity-60">
+            “文学是灯，照亮通往实验室的小径。”
           </p>
         </motion.footer>
       </main>
