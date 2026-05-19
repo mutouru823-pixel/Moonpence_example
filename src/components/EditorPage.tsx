@@ -17,7 +17,8 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
     setSelectedAuthor,
     setPolishResult,
     setIsLoading,
-    getCustomStyleById
+    getCustomStyleById,
+    addHistoryRecord
   } = useAppContext();
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -83,6 +84,16 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
         polishMode
       );
       setPolishResult(result);
+      
+      // 保存到历史记录
+      addHistoryRecord({
+        originalText,
+        polishResult: result,
+        selectedAuthor,
+        polishIntensity,
+        polishMode
+      });
+      
       onPolish();
     } catch (error) {
       console.error('润色失败:', error);

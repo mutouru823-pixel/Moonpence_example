@@ -13,6 +13,16 @@ interface CustomStyle {
   createdAt: number;
 }
 
+interface HistoryRecord {
+  id: string;
+  originalText: string;
+  polishResult: PolishedResult;
+  selectedAuthor: string;
+  polishIntensity: number;
+  polishMode: string;
+  createdAt: number;
+}
+
 interface AppContextType {
   apiKey: string;
   setApiKey: (key: string) => void;
@@ -37,11 +47,16 @@ interface AppContextType {
   removeCustomStyle: (id: string) => void;
   getCustomStyleById: (id: string) => CustomStyle | undefined;
   getAllAuthors: (defaultAuthors: Author[]) => Author[];
+  historyRecords: HistoryRecord[];
+  addHistoryRecord: (record: Omit<HistoryRecord, 'id' | 'createdAt'>) => void;
+  removeHistoryRecord: (id: string) => void;
+  clearHistoryRecords: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'moonpence_custom_styles';
+const HISTORY_STORAGE_KEY = 'moonpence_history';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [apiKey, setApiKey] = useState<string>('');
@@ -54,6 +69,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [polishResult, setPolishResult] = useState<PolishedResult | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [customStyles, setCustomStyles] = useState<CustomStyle[]>([]);
+  const [historyRecords, setHistoryRecords] = useState<HistoryRecord[]>([]);
 
   // 加载保存的自定义风格
   useEffect(() => {
@@ -68,6 +84,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   }, []);
 
+  // 加载历史记录
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(HISTORY_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setHistoryRecords(parsed);
+      }
+    } catch (error) {
+      console.error('加载历史记录失败:', error);
+    }
+  }, []);
+
   // 保存自定义风格到localStorage
   useEffect(() => {
     try {
@@ -76,6 +105,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       console.error('保存自定义风格失败:', error);
     }
   }, [customStyles]);
+
+  // 保存历史记录到localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(historyRecords));
+    } catch (error) {
+      console.error('保存历史记录失败:', error);
+    }
+  }, [historyRecords]);
 
   const addCustomStyle = (style: Omit<CustomStyle, 'id' | 'createdAt'>) => {
     const newStyle: CustomStyle = {
@@ -111,6 +149,24 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return [...defaultAuthors, ...customAuthors];
   };
 
+  const addHistoryRecord = (record: Omit<HistoryRecord, 'id' | 'createdAt'>) => {
+    const newRecord: HistoryRecord = {
+      ...record,
+      id: `history_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      createdAt: Date.now()
+    };
+    // 添加到前面，最新的在最上面
+    setHistoryRecords(prev => [newRecord, ...prev]);
+  };
+
+  const removeHistoryRecord = (id: string) => {
+    setHistoryRecords(prev => prev.filter(r => r.id !== id));
+  };
+
+  const clearHistoryRecords = () => {
+    setHistoryRecords([]);
+  };
+
   return (
     <AppContext.Provider value={{
       apiKey,
@@ -136,6 +192,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       removeCustomStyle,
       getCustomStyleById,
       getAllAuthors,
+      historyRecords,
+      addHistoryRecord,
+      removeHistoryRecord,
+      clearHistoryRecords,
     }}>
       {children}
     </AppContext.Provider>

@@ -36,6 +36,17 @@ export default function BottomNav({ currentPage, onNavigate }: { currentPage: Pa
           实验室
         </span>
       </button>
+      <button 
+        onClick={() => onNavigate('history')}
+        className={`flex flex-col items-center justify-center transition-all flex-1 py-2 ${currentPage === 'history' ? 'text-primary font-bold transform translate-y-[-2px]' : 'text-on-surface-variant opacity-60 hover:opacity-100'}`}
+      >
+        <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: currentPage === 'history' ? "'FILL' 1" : "" }}>
+          history
+        </span>
+        <span className="font-label-md text-[10px] md:text-[10px] uppercase mt-1">
+          历史
+        </span>
+      </button>
     </nav>
   );
 }
