@@ -41,7 +41,10 @@ export interface StyleMixResult {
       structureBalance: number;
       rhythm: string;
       tension: number;
+      restraintPercent: number;
+      passionPercent: number;
     };
+    description: string;
   };
   preview: string;
 }
