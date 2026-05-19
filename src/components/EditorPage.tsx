@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { Page } from '../App';
 import BottomNav from './BottomNav';
+import AuthorSelector from './AuthorSelector';
 import { useAppContext } from '../context/AppContext';
-import { apiService } from '../services/api';
+import { apiService, Author } from '../services/api';
 
 export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => void, onNavigate: (page: Page) => void }) {
   const { 
@@ -20,6 +21,8 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [authorSelectorOpen, setAuthorSelectorOpen] = useState(false);
+  const [selectedAuthorData, setSelectedAuthorData] = useState<Author | null>(null);
   
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 640);
@@ -27,8 +30,26 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  useEffect(() => {
+    loadSelectedAuthor();
+  }, [selectedAuthor]);
+
+  const loadSelectedAuthor = async () => {
+    try {
+      const author = await apiService.getAuthor(selectedAuthor);
+      setSelectedAuthorData(author);
+    } catch (error) {
+      console.error('Failed to load author:', error);
+    }
+  };
+
+  const handleAuthorSelect = (author: Author) => {
+    setSelectedAuthor(author.id);
+    setSelectedAuthorData(author);
+  };
   
-  const intensityMap: Record<number, string> = { 1: "轻度", 2: "适中", 3: "重度" };
+  const intensityMap: Record<number, string> = { 1: '轻度', 2: '适中', 3: '重度' };
   const wordCount = originalText.trim().length > 0 ? originalText.trim().split(/\s+/).filter(w => w.length > 0).length : 0;
   const charCount = originalText.length;
 
@@ -74,18 +95,28 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
         <section className="mb-6 md:mb-stack-lg animate-fade-in" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-center justify-between mb-3 md:mb-stack-sm">
             <span className="text-xs md:text-label-md text-on-surface-variant uppercase tracking-widest">作家选择 / WRITER SELECTION</span>
-            <button className="text-xs md:text-label-md text-on-surface-variant flex items-center gap-1 hover:text-primary transition-colors group">
+            <button 
+              className="text-xs md:text-label-md text-on-surface-variant flex items-center gap-1 hover:text-primary transition-colors group"
+              onClick={() => setAuthorSelectorOpen(true)}
+            >
               更换作家
               <span className="material-symbols-outlined text-base group-hover:rotate-180 transition-transform duration-500">history_edu</span>
             </button>
           </div>
-          <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl border border-outline-variant/20 bg-surface-container-low ink-shadow cursor-pointer hover:bg-surface-container transition-colors">
+          <div 
+            className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl border border-outline-variant/20 bg-surface-container-low ink-shadow cursor-pointer hover:bg-surface-container transition-colors"
+            onClick={() => setAuthorSelectorOpen(true)}
+          >
             <div className="w-12 h-12 md:w-16 md:h-16 rounded-lg overflow-hidden bg-surface-container-highest grayscale contrast-125 shrink-0 flex items-center justify-center">
               <span className="material-symbols-outlined text-2xl md:text-3xl text-primary">person</span>
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="text-base md:text-title-md text-primary mb-1 font-medium">Ernest Hemingway</h2>
-              <p className="text-xs md:text-label-md text-on-surface-variant italic font-normal truncate">Short, rhythmic sentences. Direct imagery.</p>
+              <h2 className="text-base md:text-title-md text-primary mb-1 font-medium">
+                {selectedAuthorData?.name || 'Ernest Hemingway'}
+              </h2>
+              <p className="text-xs md:text-label-md text-on-surface-variant italic font-normal truncate">
+                {selectedAuthorData?.description || 'Short, rhythmic sentences. Direct imagery'}
+              </p>
             </div>
             <span className="material-symbols-outlined text-outline-variant text-xl">chevron_right</span>
           </div>
@@ -172,6 +203,13 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
       >
         <span className="material-symbols-outlined text-xl md:text-2xl">ink_pen</span>
       </button>
+
+      <AuthorSelector
+        isOpen={authorSelectorOpen}
+        onClose={() => setAuthorSelectorOpen(false)}
+        onSelect={handleAuthorSelect}
+        selectedAuthorId={selectedAuthor}
+      />
 
       <BottomNav currentPage="editor" onNavigate={onNavigate} />
     </div>

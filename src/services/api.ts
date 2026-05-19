@@ -1,15 +1,28 @@
+export interface StyleProfile {
+  rhythm: number;
+  lexical: number;
+  emotional: number;
+  depth: number;
+}
+
+export interface AnalysisPoint {
+  title: string;
+  description: string;
+}
+
 export interface PolishedResult {
   polishedText: string;
-  styleProfile: {
-    rhythm: number;
-    lexical: number;
-    emotional: number;
-    depth: number;
-  };
-  analysis: Array<{
-    title: string;
-    description: string;
-  }>;
+  styleProfile: StyleProfile;
+  analysis: AnalysisPoint[];
+  tags: string[];
+}
+
+export interface Author {
+  id: string;
+  name: string;
+  nameEn: string;
+  description: string;
+  characteristics: string[];
   tags: string[];
 }
 
@@ -33,14 +46,24 @@ export interface StyleMixResult {
   preview: string;
 }
 
+export interface StyleAnalysis {
+  styleAnalysis: {
+    sentenceLength: string;
+    vocabularyLevel: string;
+    tone: string;
+    dominantEmotion: string;
+  };
+  recommendations: string[];
+}
+
 class ApiService {
   private baseUrl = '/api';
 
   async polishText(
     text: string, 
-    author: string = "Ernest Hemingway", 
+    author: string = 'hemingway', 
     intensity: number = 2, 
-    mode: string = "Plain"
+    mode: string = 'Plain'
   ): Promise<PolishedResult> {
     const response = await fetch(`${this.baseUrl}/polish`, {
       method: 'POST',
@@ -62,7 +85,29 @@ class ApiService {
     return response.json();
   }
 
-  async analyzeText(text: string): Promise<any> {
+  async getAuthors(): Promise<Author[]> {
+    const response = await fetch(`${this.baseUrl}/authors`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch authors');
+    }
+    
+    const data = await response.json();
+    return data.authors;
+  }
+
+  async getAuthor(id: string): Promise<Author> {
+    const response = await fetch(`${this.baseUrl}/authors/${id}`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch author');
+    }
+    
+    const data = await response.json();
+    return data.author;
+  }
+
+  async analyzeText(text: string): Promise<StyleAnalysis> {
     const response = await fetch(`${this.baseUrl}/analyze`, {
       method: 'POST',
       headers: {
