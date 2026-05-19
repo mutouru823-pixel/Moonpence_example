@@ -72,7 +72,7 @@ const authors = [
   },
   {
     id: 'hemingway',
-    name: 'Ernest Hemingway',
+    name: '海明威',
     nameEn: 'Ernest Hemingway',
     description: '短句子，直接意象，冰山原则，硬汉精神',
     characteristics: ['简洁有力', '冰山原则', '硬汉主题', '旅行元素'],
@@ -87,6 +87,78 @@ const authors = [
     characteristics: ['幽默讽刺', '智性写作', '荒诞感', '特立独行'],
     styleProfile: { rhythm: 78, lexical: 82, emotional: 65, depth: 88 },
     tags: ['幽默', '智性', '独特']
+  },
+  {
+    id: 'luotuo',
+    name: '老舍',
+    nameEn: 'Lao She',
+    description: '京味十足，幽默讽刺，世态炎凉，人情练达',
+    characteristics: ['北京方言', '市民文学', '幽默讽刺', '人文关怀'],
+    styleProfile: { rhythm: 72, lexical: 65, emotional: 70, depth: 85 },
+    tags: ['京味', '幽默', '现代文学']
+  },
+  {
+    id: 'luxun',
+    name: '鲁迅',
+    nameEn: 'Lu Xun',
+    description: '深刻批判，思想启蒙，冷峻犀利，民族脊梁',
+    characteristics: ['杂文犀利', '国民性批判', '思想深邃', '战斗精神'],
+    styleProfile: { rhythm: 68, lexical: 88, emotional: 85, depth: 98 },
+    tags: ['批判', '思想', '文学大师']
+  },
+  {
+    id: 'jinyong',
+    name: '金庸',
+    nameEn: 'Jin Yong',
+    description: '武侠宗师，历史文化，家国情怀，江湖侠义',
+    characteristics: ['武侠世界', '历史融合', '侠义精神', '情节跌宕'],
+    styleProfile: { rhythm: 85, lexical: 78, emotional: 88, depth: 82 },
+    tags: ['武侠', '历史', '侠义']
+  },
+  {
+    id: 'kawabata',
+    name: '川端康成',
+    nameEn: 'Yasunari Kawabata',
+    description: '物哀美学，细腻婉约，古典优雅，虚无之美',
+    characteristics: ['物哀美学', '细腻描写', '古典意象', '淡雅风格'],
+    styleProfile: { rhythm: 62, lexical: 92, emotional: 72, depth: 90 },
+    tags: ['物哀', '细腻', '日本文学']
+  },
+  {
+    id: 'marquez',
+    name: '马尔克斯',
+    nameEn: 'Gabriel García Márquez',
+    description: '魔幻现实主义，时间循环，家族史诗，孤独主题',
+    characteristics: ['魔幻现实', '时间循环', '史诗叙事', '象征隐喻'],
+    styleProfile: { rhythm: 75, lexical: 90, emotional: 80, depth: 95 },
+    tags: ['魔幻现实', '史诗', '诺奖']
+  },
+  {
+    id: 'boorges',
+    name: '博尔赫斯',
+    nameEn: 'Jorge Luis Borges',
+    description: '哲学幻想，迷宫隐喻，宇宙玄思，微型史诗',
+    characteristics: ['哲学幻想', '迷宫意象', '时间哲学', '书籍主题'],
+    styleProfile: { rhythm: 65, lexical: 95, emotional: 45, depth: 100 },
+    tags: ['哲学', '幻想', '大师']
+  },
+  {
+    id: 'calvino',
+    name: '卡尔维诺',
+    nameEn: 'Italo Calvino',
+    description: '轻盈智慧，童话寓言，后现代实验，宇宙诗意',
+    characteristics: ['轻盈风格', '寓言叙事', '想象力丰富', '智性趣味'],
+    styleProfile: { rhythm: 82, lexical: 85, emotional: 55, depth: 88 },
+    tags: ['轻盈', '寓言', '后现代']
+  },
+  {
+    id: 'salinger',
+    name: '塞林格',
+    nameEn: 'J.D. Salinger',
+    description: '青春叛逆，精神困惑，纯真守护，疏离孤独',
+    characteristics: ['青春视角', '口语化', '纯真主题', '疏离感'],
+    styleProfile: { rhythm: 78, lexical: 60, emotional: 75, depth: 78 },
+    tags: ['青春', '叛逆', '经典']
   }
 ];
 
