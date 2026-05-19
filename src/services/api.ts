@@ -60,7 +60,7 @@ export interface StyleAnalysis {
 }
 
 class ApiService {
-  private baseUrl = '/api';
+  private baseUrl = import.meta.env.VITE_API_URL || '/api';
 
   async polishText(
     text: string, 
