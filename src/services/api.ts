@@ -60,7 +60,7 @@ export interface StyleAnalysis {
 }
 
 class ApiService {
-  private baseUrl = import.meta.env.VITE_API_URL || '/api';
+  private baseUrl = 'https://moonpenceexample-production.up.railway.app';
 
   async polishText(
     text: string, 
@@ -68,7 +68,7 @@ class ApiService {
     intensity: number = 2, 
     mode: string = 'Plain'
   ): Promise<PolishedResult> {
-    const response = await fetch(`${this.baseUrl}/polish`, {
+    const response = await fetch(`${this.baseUrl}/api/polish`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ class ApiService {
   }
 
   async getAuthors(): Promise<Author[]> {
-    const response = await fetch(`${this.baseUrl}/authors`);
+    const response = await fetch(`${this.baseUrl}/api/authors`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch authors');
@@ -100,7 +100,7 @@ class ApiService {
   }
 
   async getAuthor(id: string): Promise<Author> {
-    const response = await fetch(`${this.baseUrl}/authors/${id}`);
+    const response = await fetch(`${this.baseUrl}/api/authors/${id}`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch author');
@@ -111,7 +111,7 @@ class ApiService {
   }
 
   async analyzeText(text: string): Promise<StyleAnalysis> {
-    const response = await fetch(`${this.baseUrl}/analyze`, {
+    const response = await fetch(`${this.baseUrl}/api/analyze`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ class ApiService {
   }
 
   async mixStyles(request: StyleMixRequest): Promise<StyleMixResult> {
-    const response = await fetch(`${this.baseUrl}/mix-styles`, {
+    const response = await fetch(`${this.baseUrl}/api/mix-styles`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ class ApiService {
   }
 
   async checkHealth(): Promise<{ status: string; message: string }> {
-    const response = await fetch(`${this.baseUrl}/health`);
+    const response = await fetch(`${this.baseUrl}/api/health`);
     if (!response.ok) {
       throw new Error('Server is not healthy');
     }
