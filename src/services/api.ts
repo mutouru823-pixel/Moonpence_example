@@ -214,12 +214,18 @@ class ApiService {
     text: string, 
     author: string = 'hemingway', 
     intensity: number = 2, 
-    mode: string = 'Plain'
+    mode: string = 'Plain',
+    customApiKey?: string,
+    customBaseUrl?: string,
+    customModelName?: string
   ): Promise<PolishedResult> {
     const response = await fetch(`${this.baseUrl}/api/polish`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-Api-Key': customApiKey || '',
+        'X-Base-Url': customBaseUrl || '',
+        'X-Model-Name': customModelName || ''
       },
       body: JSON.stringify({
         text,

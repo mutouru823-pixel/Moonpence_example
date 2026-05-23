@@ -171,7 +171,7 @@ const authors = [
 ];
 
 // 使用 DeepSeek API 润色文本
-async function polishText(text, author, intensity) {
+async function polishText(text, author, intensity, customApiKey, customBaseUrl, customModelName) {
   const authorData = authors.find(a => a.id === author) || authors[6];
   const adjustedIntensity = intensity || 50;
 
@@ -188,35 +188,87 @@ async function polishText(text, author, intensity) {
 ${text}`;
 
   try {
-    const apiKey = process.env.DEEPSEEK_API_KEY || 'sk-3131f75b62a2453f859f0fce6719b9b4';
-    const baseUrl = 'https://api.deepseek.com';
-    const modelName = 'deepseek-v4-flash';
+    let polishedText = '';
 
-    const response = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: modelName,
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.7
-      })
-    });
+    // 通道一：用户在前端设置了自定义API配置
+    if (customApiKey && customBaseUrl) {
+      const model = customModelName || 'gpt-3.5-turbo';
+      console.log('Using Channel 1: Custom User API endpoint:', customBaseUrl, 'Model:', model);
+      const response = await fetch(`${customBaseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${customApiKey}`
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.7
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error(`API 请求失败: ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`自定义 API 请求失败: ${response.status}`);
+      }
+
+      const data = await response.json();
+      polishedText = data.choices[0]?.message?.content || text;
+    }
+    // 通道二：服务器配置了免费的 Gemini 备份密钥
+    else if (process.env.GEMINI_API_KEY) {
+      const geminiKey = process.env.GEMINI_API_KEY;
+      console.log('Using Channel 2: Server-side Gemini 2.5 Flash API');
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: prompt }]
+          }]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Gemini API 请求失败: ${response.status}`);
+      }
+
+      const data = await response.json();
+      polishedText = data.candidates?.[0]?.content?.parts?.[0]?.text || text;
+    }
+    // 通道三：使用 DeepSeek 接口（修正了模型名）
+    else {
+      const apiKey = process.env.DEEPSEEK_API_KEY || 'sk-3131f75b62a2453f859f0fce6719b9b4';
+      const baseUrl = 'https://api.deepseek.com';
+      const modelName = 'deepseek-chat'; // 修正为正确的 deepseek-chat
+      console.log('Using Channel 3: DeepSeek API (Model: deepseek-chat)');
+
+      const response = await fetch(`${baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: modelName,
+          messages: [
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`DeepSeek API 请求失败: ${response.status}`);
+      }
+
+      const data = await response.json();
+      polishedText = data.choices[0]?.message?.content || text;
     }
 
-    const data = await response.json();
-    let polishedText = data.choices[0]?.message?.content || text;
-    
     // 生成风格分析
     const analysisPoints = [
       { title: '句式韵律', description: `模仿${authorData.name}的节奏感，长短句错落有致，营造独特的叙事节奏` },
@@ -245,7 +297,7 @@ ${text}`;
     };
     
   } catch (error) {
-    console.error('DeepSeek API 调用失败:', error);
+    console.error('API 润色接口调用失败:', error);
     // 回退到简单润色
     let resultText = text;
     if (adjustedIntensity >= 30) {
@@ -254,7 +306,7 @@ ${text}`;
     return {
       polishedText: resultText,
       styleProfile: authorData.styleProfile,
-      analysis: [{ title: '本地润色', description: '使用本地模拟润色，API调用失败' }],
+      analysis: [{ title: '本地润色', description: `本地模拟润色 (错误: ${error.message})` }],
       tags: [...authorData.tags, '本地润色']
     };
   }
@@ -297,6 +349,9 @@ app.get('/api/authors/:id', (req, res) => {
 app.post('/api/polish', async (req, res) => {
   try {
     const { text, author, intensity, mode } = req.body;
+    const customApiKey = req.headers['x-api-key'];
+    const customBaseUrl = req.headers['x-base-url'];
+    const customModelName = req.headers['x-model-name'];
     
     if (!text) {
       return res.status(400).json({ error: 'Text is required' });
@@ -304,7 +359,14 @@ app.post('/api/polish', async (req, res) => {
     
     console.log('Polishing text:', { text: text.substring(0, 50), author, intensity, mode });
     
-    const result = await polishText(text, author, intensity || 50);
+    const result = await polishText(
+      text, 
+      author, 
+      intensity || 50, 
+      customApiKey, 
+      customBaseUrl, 
+      customModelName
+    );
     res.json(result);
     
   } catch (error) {

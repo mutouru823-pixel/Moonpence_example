@@ -18,7 +18,10 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
     setPolishResult,
     setIsLoading,
     getCustomStyleById,
-    addHistoryRecord
+    addHistoryRecord,
+    apiKey,
+    baseUrl,
+    modelName
   } = useAppContext();
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -81,7 +84,10 @@ export default function EditorPage({ onPolish, onNavigate }: { onPolish: () => v
         originalText, 
         selectedAuthor, 
         polishIntensity, 
-        polishMode
+        polishMode,
+        apiKey,
+        baseUrl,
+        modelName
       );
       setPolishResult(result);
       
