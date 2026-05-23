@@ -339,6 +339,41 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Moonpence server is running' });
 });
 
+// Diagnostic endpoint
+app.get('/api/diag', async (req, res) => {
+  const geminiKeyExists = !!process.env.GEMINI_API_KEY;
+  const deepseekKeyExists = !!process.env.DEEPSEEK_API_KEY;
+  
+  let geminiTestResult = 'Not tested';
+  if (geminiKeyExists) {
+    try {
+      const geminiKey = process.env.GEMINI_API_KEY;
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: 'Hello' }] }] })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        geminiTestResult = `Success! Response: "${responseText.trim()}"`;
+      } else {
+        geminiTestResult = `Failed with status ${response.status}`;
+      }
+    } catch (err) {
+      geminiTestResult = `Error: ${err.message}`;
+    }
+  }
+
+  res.json({
+    geminiKeyExists,
+    geminiTestResult,
+    deepseekKeyExists,
+    nodeVersion: process.version,
+    envKeys: Object.keys(process.env).filter(k => k.includes('KEY') || k.includes('API') || k.includes('PORT'))
+  });
+});
+
 // 获取作家列表
 app.get('/api/authors', (req, res) => {
   res.json({

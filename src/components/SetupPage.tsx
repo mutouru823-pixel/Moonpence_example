@@ -47,6 +47,22 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
     }, 1200);
   };
 
+  const handleFreeEntry = () => {
+    setIsSubmitting(true);
+
+    // 清空任何前端 API 配置，使请求默认走后端的官方服务器级 API (如 Gemini 官方通道)
+    setApiKey('');
+    setBaseUrl('');
+    setModelName('');
+
+    setTimeout(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        onEnter();
+      }, 800);
+    }, 1200);
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -172,14 +188,30 @@ export default function SetupPage({ onEnter }: { onEnter: () => void }) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-primary text-white text-sm md:text-label-md py-4 md:py-stack-sm rounded-xl hover:bg-inverse-surface transition-all duration-300 transform active:scale-[0.98] ink-wash-shadow flex items-center justify-center gap-2 md:gap-unit group disabled:opacity-80"
+              className="w-full bg-primary text-white text-sm md:text-label-md py-4 md:py-stack-sm rounded-xl hover:bg-inverse-surface transition-all duration-300 transform active:scale-[0.98] ink-wash-shadow flex items-center justify-center gap-2 md:gap-unit group disabled:opacity-80 font-bold"
             >
               {isSubmitting ? (
                 <span className="material-symbols-outlined animate-spin text-xl">progress_activity</span>
               ) : (
                 <>
-                  <span>进入文学世界</span>
+                  <span>使用自定义 API 进入</span>
                   <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleFreeEntry}
+              disabled={isSubmitting}
+              className="w-full border border-primary text-primary text-sm md:text-label-md py-4 md:py-stack-sm rounded-xl hover:bg-primary/5 transition-all duration-300 transform active:scale-[0.98] flex items-center justify-center gap-2 md:gap-unit group disabled:opacity-80 font-bold"
+            >
+              {isSubmitting ? (
+                <span className="material-symbols-outlined animate-spin text-xl">progress_activity</span>
+              ) : (
+                <>
+                  <span>免费游客直接进入</span>
+                  <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform animate-pulse">bolt</span>
                 </>
               )}
             </button>
