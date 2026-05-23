@@ -189,62 +189,77 @@ ${text}`;
 
   try {
     let polishedText = '';
+    let success = false;
 
-    // 通道一：用户在前端设置了自定义API配置
+    // 尝试通道一：用户在前端设置了自定义API配置
     if (customApiKey && customBaseUrl) {
-      const model = customModelName || 'gpt-3.5-turbo';
-      console.log('Using Channel 1: Custom User API endpoint:', customBaseUrl, 'Model:', model);
-      const response = await fetch(`${customBaseUrl}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${customApiKey}`
-        },
-        body: JSON.stringify({
-          model: model,
-          messages: [
-            { role: 'user', content: prompt }
-          ],
-          temperature: 0.7
-        })
-      });
+      try {
+        const model = customModelName || 'gpt-3.5-turbo';
+        console.log('Attempting Channel 1: Custom User API endpoint:', customBaseUrl, 'Model:', model);
+        const response = await fetch(`${customBaseUrl}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${customApiKey}`
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              { role: 'user', content: prompt }
+            ],
+            temperature: 0.7
+          })
+        });
 
-      if (!response.ok) {
-        throw new Error(`自定义 API 请求失败: ${response.status}`);
+        if (response.ok) {
+          const data = await response.json();
+          polishedText = data.choices[0]?.message?.content || text;
+          success = true;
+          console.log('Channel 1 succeeded!');
+        } else {
+          console.warn(`Channel 1 failed with status ${response.status}. Falling back...`);
+        }
+      } catch (err) {
+        console.warn('Channel 1 error, falling back...', err.message);
       }
-
-      const data = await response.json();
-      polishedText = data.choices[0]?.message?.content || text;
     }
-    // 通道二：服务器配置了免费的 Gemini 备份密钥
-    else if (process.env.GEMINI_API_KEY) {
-      const geminiKey = process.env.GEMINI_API_KEY;
-      console.log('Using Channel 2: Server-side Gemini 2.5 Flash API');
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: prompt }]
-          }]
-        })
-      });
 
-      if (!response.ok) {
-        throw new Error(`Gemini API 请求失败: ${response.status}`);
+    // 尝试通道二：服务器配置了免费的 Gemini 备份密钥
+    if (!success && process.env.GEMINI_API_KEY) {
+      try {
+        const geminiKey = process.env.GEMINI_API_KEY;
+        console.log('Attempting Channel 2: Server-side Gemini 2.5 Flash API');
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{ text: prompt }]
+            }]
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          polishedText = data.candidates?.[0]?.content?.parts?.[0]?.text || text;
+          success = true;
+          console.log('Channel 2 succeeded!');
+        } else {
+          console.warn(`Channel 2 failed with status ${response.status}. Falling back...`);
+        }
+      } catch (err) {
+        console.warn('Channel 2 error, falling back...', err.message);
       }
-
-      const data = await response.json();
-      polishedText = data.candidates?.[0]?.content?.parts?.[0]?.text || text;
     }
-    // 通道三：使用 DeepSeek 接口（修正了模型名）
-    else {
+
+    // 尝试通道三：使用 DeepSeek 接口
+    if (!success) {
       const apiKey = process.env.DEEPSEEK_API_KEY || 'sk-3131f75b62a2453f859f0fce6719b9b4';
       const baseUrl = 'https://api.deepseek.com';
       const modelName = 'deepseek-chat'; // 修正为正确的 deepseek-chat
-      console.log('Using Channel 3: DeepSeek API (Model: deepseek-chat)');
+      console.log('Attempting Channel 3: DeepSeek API (Model: deepseek-chat)');
 
       const response = await fetch(`${baseUrl}/chat/completions`, {
         method: 'POST',
@@ -267,6 +282,8 @@ ${text}`;
 
       const data = await response.json();
       polishedText = data.choices[0]?.message?.content || text;
+      success = true;
+      console.log('Channel 3 succeeded!');
     }
 
     // 生成风格分析
