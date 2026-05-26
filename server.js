@@ -228,8 +228,9 @@ ${text}`;
     if (!success && process.env.GEMINI_API_KEY) {
       try {
         const geminiKey = process.env.GEMINI_API_KEY;
-        console.log('Attempting Channel 2: Server-side Gemini 2.5 Flash API');
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`, {
+        const geminiModel = customModelName || process.env.GEMINI_MODEL_NAME || 'gemini-1.5-flash';
+        console.log(`Attempting Channel 2: Server-side Gemini API with model: ${geminiModel}`);
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -245,9 +246,9 @@ ${text}`;
           const data = await response.json();
           polishedText = data.candidates?.[0]?.content?.parts?.[0]?.text || text;
           success = true;
-          console.log('Channel 2 succeeded!');
+          console.log(`Channel 2 succeeded with model: ${geminiModel}!`);
         } else {
-          console.warn(`Channel 2 failed with status ${response.status}. Falling back...`);
+          console.warn(`Channel 2 failed with status ${response.status} using model ${geminiModel}. Falling back...`);
         }
       } catch (err) {
         console.warn('Channel 2 error, falling back...', err.message);
@@ -256,7 +257,10 @@ ${text}`;
 
     // 尝试通道三：使用 DeepSeek 接口
     if (!success) {
-      const apiKey = process.env.DEEPSEEK_API_KEY || 'sk-3131f75b62a2453f859f0fce6719b9b4';
+      const apiKey = process.env.DEEPSEEK_API_KEY;
+      if (!apiKey) {
+        throw new Error('DEEPSEEK_API_KEY is not configured in environment variables');
+      }
       const baseUrl = 'https://api.deepseek.com';
       const modelName = 'deepseek-chat'; // 修正为正确的 deepseek-chat
       console.log('Attempting Channel 3: DeepSeek API (Model: deepseek-chat)');
